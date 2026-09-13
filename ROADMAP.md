@@ -1,0 +1,107 @@
+# Roadmap — Degenerate Gambling Corner
+
+Claude: read this at the start of every session. Update it at the end of every
+session. It is the memory between conversations.
+
+**Status line — update this every time:**
+
+    LAST SESSION: Day one, step 10 — .env.local created, all 5 services' keys
+                  pasted in and verified live against each service's API
+    NEXT UP:      Day one, step 11 — CLAUDE.md written (already done — check
+                  it reflects the real project, then tick it) / step 12 —
+                  scaffold the project
+    BLOCKED ON:   nothing
+
+---
+
+## How to use this file
+
+1. At the start of a session, read this file and tell Asher where we are.
+2. Do exactly one session from the list below. Not two.
+3. At the end: tick the box, add a note at the bottom, update the status line
+   above, and commit.
+
+Marks: `[ ]` not started · `[~]` in progress · `[x]` done
+
+---
+
+## Day one — setup
+
+- [x] 01 Claude account and plan
+- [x] 02 GitHub account and empty private repository
+- [x] 03 Buy ashey.bet (and degencorner.com as the backup)
+- [x] 04 Supabase account and empty project
+- [x] 05 Vercel account, linked to GitHub
+- [x] 06 Upstash, Resend, Sentry, PostHog accounts
+- [x] 07 Install Node, Git, GitHub tool
+- [x] 08 Connect services to Claude
+- [x] 09 Project folder created and opened in Claude
+- [x] 10 .env.local created, keys pasted in, .gitignore excludes it
+- [x] 11 CLAUDE.md written
+- [ ] 12 Project scaffolded, deployed, ashey.bet shows a holding page
+- [ ] 13 Mascot character sheet generated
+
+## Build sessions
+
+Model: **Sonnet** for all of these — Asher is on the Pro plan.
+One session per sitting. Fresh conversation each time. Commit at the end.
+
+- [ ] 02 VOICE.md written, CLAUDE.md refreshed against the real project
+- [ ] 03 Design system: colour tokens, type scale, light and dark, component gallery
+- [ ] 04 Accounts, wallet, append-only ledger
+      MUST: four cheating tests written and shown failing before any fix
+      (duplicate bet, oversized bet, simultaneous requests, negative balance)
+- [ ] 05 Fairness engine and the public verifier page
+- [ ] 06 Shared bet panel (manual and auto) and Dice
+      MUST: one million simulated rounds match the predicted win rate
+- [ ] 07 Limbo, Wheel, Keno
+- [ ] 08 Capture the pattern as /newgame, then prove it with `/newgame Hilo`
+- [ ] 09 Mines — server-held board, double-cash-out test written first
+- [ ] 10 Plinko — server decides the slot, the animation follows it
+- [ ] 11 Crash — referee programme, shared clock, cash-out ordering
+
+## After the games
+
+- [ ] Live bet feed, player counters, public profiles
+- [ ] Chat: filter, speed limit, kill switch
+- [ ] Incognito settings page (three switches)
+- [ ] Experience points, ranks, badges, daily bonus, leaderboard
+- [ ] Slot engine: reels, paylines, payout tuning, free spins
+- [ ] Slot artwork: three themes
+- [ ] Texas Hold'em: hand evaluator, tables, blinds, timers, side pots
+- [ ] Mobile layout, sound toggle, speed pass
+- [ ] A page per game so search engines can find them
+- [ ] Sentry and PostHog switched on
+- [ ] Load rehearsal: a thousand simulated players at once
+- [ ] Terms, privacy notice, responsible-play page, 18+ gate
+
+---
+
+## Rules that never bend
+
+Also in CLAUDE.md. Repeated here because they matter most.
+
+- No real money in or out. Ever. No purchases, prizes, redemption, or coin
+  transfers between players.
+- Every outcome is decided on the server. The browser only animates.
+- Balances are derived from the ledger, never stored as an editable number.
+- Failing test first on anything touching coins, outcomes or fairness.
+- Ask before adding a dependency, or inventing a second way to do something
+  that already has a pattern here.
+
+---
+
+## Session notes
+
+Newest at the top. One or two lines each: what got done, what broke, what to
+watch next time.
+
+    2026-09-13 — .env.local + .gitignore created, keys for Supabase,
+    Upstash, Resend, Sentry, PostHog fetched (with Claude driving the
+    browser for the lookups) and pasted in by Asher, then live-tested
+    against each service — all 6 keys confirmed working. Note: created a
+    new Sentry project (degenerate-gambling-corner, Next.js platform) and
+    a new Resend API key + Sentry org auth token, since none existed yet.
+    Also noticed a broad-scope "Claude" OAuth connection already
+    authorized in PostHog (147+ write scopes) — left it alone, worth
+    Asher reviewing later.

@@ -1,0 +1,15 @@
+# Secrets — never commit these
+.env.local
+.env*.local
+.env
+
+# Node (added early since the project folder is about to be scaffolded)
+node_modules/
+
+# Build output
+.next/
+dist/
+out/
+
+# Editor/OS noise
+.DS_Store
