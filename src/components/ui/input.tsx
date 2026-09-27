@@ -68,10 +68,12 @@ type SwitchProps = {
   label: string;
   description?: string;
   defaultChecked?: boolean;
+  // Form field name. Sent as "on" when switched on, left out when off.
+  name?: string;
 };
 
 // An on/off switch. Used for the three Incognito settings.
-export function Switch({ id, label, description, defaultChecked }: SwitchProps) {
+export function Switch({ id, label, description, defaultChecked, name }: SwitchProps) {
   return (
     <label
       htmlFor={id}
@@ -86,6 +88,7 @@ export function Switch({ id, label, description, defaultChecked }: SwitchProps) 
       <span className="relative mt-0.5 inline-flex shrink-0">
         <input
           id={id}
+          name={name}
           type="checkbox"
           role="switch"
           defaultChecked={defaultChecked}

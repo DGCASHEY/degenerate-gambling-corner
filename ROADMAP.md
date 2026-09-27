@@ -5,11 +5,13 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: Session 03 done — design tokens (light + dark), type and
-                  spacing scales, component gallery at /design.
-    NEXT UP:      Build session 04 — accounts, wallet, append-only ledger.
-                  Four cheating tests written and shown failing first.
-    BLOCKED ON:   nothing
+    LAST SESSION: Session 04 built — wallet, ledger, faucet, sign-up/in,
+                  account page. 36 cheat tests pass. NOT PUSHED yet.
+    NEXT UP:      Finish 04: Asher signs up locally to prove it end to end,
+                  Vercel env vars + Supabase auth URLs set, then push.
+                  Then session 05 — fairness engine and verifier page.
+    BLOCKED ON:   Asher: Vercel environment variables, Supabase auth
+                  redirect URLs (see 2026-09-27 session 04 note)
 
 ---
 
@@ -47,7 +49,7 @@ One session per sitting. Fresh conversation each time. Commit at the end.
 
 - [x] 02 VOICE.md written, CLAUDE.md refreshed against the real project
 - [x] 03 Design system: colour tokens, type scale, light and dark, component gallery
-- [ ] 04 Accounts, wallet, append-only ledger
+- [~] 04 Accounts, wallet, append-only ledger
       MUST: four cheating tests written and shown failing before any fix
       (duplicate bet, oversized bet, simultaneous requests, negative balance)
 - [ ] 05 Fairness engine and the public verifier page
@@ -94,6 +96,41 @@ Also in CLAUDE.md. Repeated here because they matter most.
 
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time.
+
+    2026-09-27 — Session 04 built, not yet shipped. Asher chose to do
+    sign-in in the same session (flagged as two concerns, overridden).
+    Decisions: new accounts get 5,000 (a one-time "welcome" faucet entry);
+    two separate taps, hourly 200 and daily 1,000, claimable at any
+    balance; email + password sign-in with a required 18+ tick-box;
+    privacy defaults feed on / leaderboard on / profile off; coins stored
+    as whole hundredths. CLAUDE.md faucet wording changed: coins now come
+    from the faucet AND game payouts (Asher's call, payouts are play coins).
+    All coin rules live in supabase/migrations/20260927120000_wallet.sql:
+    row lock per player, idempotency key per movement, append-only
+    triggers, a never-negative trigger that also locks, fixed faucet
+    amounts as a CHECK, browser roles revoked. Tests run against a real
+    throwaway Postgres 17 (embedded-postgres, no Docker). Shown failing
+    first against a deliberately unprotected draft: all 31 attacks
+    succeeded (20 simultaneous bets on a 5,000 balance all went through,
+    a -1,000 bet printed coins). Then 36/36 pass, five runs in a row.
+    Migration applied to Supabase (project was paused, woken with Asher's
+    OK); Supabase security check only notes "RLS on, no policies", which
+    is deliberate. New packages: @supabase/supabase-js, @supabase/ssr,
+    pg, @types/pg, embedded-postgres (pinned 17.10.0-beta.17; "beta" is
+    the package's label, Postgres itself is stable).
+    STILL TO DO before pushing, all Asher's hands:
+      1. Sign up at localhost:3000/signup with your own email (Supabase's
+         built-in email only delivers to project team members).
+      2. Vercel: add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,
+         SUPABASE_SERVICE_ROLE_KEY. Without them the live site breaks on
+         every page, because src/proxy.ts runs on every request.
+      3. Supabase > Authentication > URL Configuration: add
+         https://dgcbet.net/** and http://localhost:3000/** as redirect URLs.
+    Watch: CI on Linux may need npm to allow embedded-postgres's install
+    script (it was blocked locally, harmless on Windows). Real players
+    will need Supabase to send email through Resend (custom SMTP) before
+    launch. The Claude connection to Vercel can't see this team's
+    settings; needs re-authorising if we want Claude to check them.
 
     2026-09-27 — Session 03 done. All colours are tokens in
     src/app/globals.css (navy bg, one electric-blue accent, win/loss/warn

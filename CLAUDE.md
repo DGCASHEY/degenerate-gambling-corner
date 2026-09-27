@@ -40,7 +40,9 @@ session, before committing.
 - The referee - an always-awake Cloudflare Durable Object owning a shared
   clock. One for Crash, one per poker table.
 - The ledger - the append-only list of every coin movement. The truth.
-- The faucet - the free coin tap. The only way a coin is ever created.
+- The faucet - the free coin tap: a one-time 5,000 welcome grant, 200
+  every hour, 1,000 every 24 hours. Coins are created only by the faucet
+  and by game payouts, and payouts are play coins, never prizes.
 - Incognito - three separate per-user switches: show in feed, show on
   leaderboard, public profile.
 
@@ -52,6 +54,10 @@ session, before committing.
 - tests/cheat/ - the exploit tests, run separately with npm run cheat.
   Everything that touches coins, outcomes or fairness gets a test here
   before it ships.
+- supabase/migrations/ - the database: accounts, the ledger and every
+  coin function. All coin rules are enforced here, not in page code.
+- src/lib/wallet.ts - the website's only way into the wallet.
+- tests/db/ - starts a throwaway real Postgres for the tests.
 - public/mascot/ - character art. character-sheet.png is the raccoon
   mascot reference sheet.
 - .github/workflows/ci.yml - runs lint, test, cheat and build on every
