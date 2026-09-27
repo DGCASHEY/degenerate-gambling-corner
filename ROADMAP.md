@@ -105,12 +105,18 @@ watch next time.
     cropped into individual sprites — that's follow-up work whenever it's
     needed for real UI use. First pass had an AI hand glitch (a duplicate
     hand stacked at the wrist in the side and three-quarter poses, where
-    the cards-hand and chips-hand overlapped) — Asher caught it, fixed by
-    regenerating with explicit "no extra hands / no duplicate hands /
-    hands never overlapping" added to the prompt, verified clean by
-    cropping and inspecting each hand closely before saving over
-    public/mascot/character-sheet.png. Worth remembering for any future
-    multi-limb character art: check hands closely before calling it done.
+    the cards-hand and chips-hand overlapped) — Asher caught it, regenerated
+    with explicit "no extra hands / no duplicate hands" in the prompt. That
+    fixed the three-quarter pose but the side (middle) pose still had a
+    third hand (a resting fist at the hip on top of the cards+chips hands)
+    — Asher caught that too. Fixed for real with two nano_banana_2
+    image-edit passes on that exact reference image: first removed the
+    extra fist (which also dropped the chips), then added the chips back
+    into that now-two-handed fist so it matches the front/three-quarter
+    poses. Verified every pose and all four expressions by cropping and
+    inspecting closely before saving over public/mascot/character-sheet.png.
+    Worth remembering for any future multi-limb character art: check hands
+    closely, more than once, before calling it done.
 
     2026-09-27 — Step 12 done. Scaffolded Next.js/TS/Tailwind (App Router),
     holding page live, Vitest wired up (npm test + placeholder npm run
