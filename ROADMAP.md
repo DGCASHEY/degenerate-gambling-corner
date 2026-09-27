@@ -5,11 +5,10 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: Day one, step 10 — .env.local created, all 5 services' keys
-                  pasted in and verified live against each service's API
-    NEXT UP:      Day one, step 11 — CLAUDE.md written (already done — check
-                  it reflects the real project, then tick it) / step 12 —
-                  scaffold the project
+    LAST SESSION: Day one, step 12 — Next.js + TS + Tailwind scaffolded,
+                  GitHub CI + branch protection on, deployed to Vercel,
+                  dgcbet.net live over HTTPS with the holding page
+    NEXT UP:      Day one, step 13 — mascot character sheet
     BLOCKED ON:   nothing
 
 ---
@@ -38,7 +37,7 @@ Marks: `[ ]` not started · `[~]` in progress · `[x]` done
 - [x] 09 Project folder created and opened in Claude
 - [x] 10 .env.local created, keys pasted in, .gitignore excludes it
 - [x] 11 CLAUDE.md written
-- [ ] 12 Project scaffolded, deployed, ashey.bet shows a holding page
+- [x] 12 Project scaffolded, deployed, dgcbet.net shows a holding page
 - [ ] 13 Mascot character sheet generated
 
 ## Build sessions
@@ -95,6 +94,19 @@ Also in CLAUDE.md. Repeated here because they matter most.
 
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time.
+
+    2026-09-27 — Step 12 done. Scaffolded Next.js/TS/Tailwind (App Router),
+    holding page live, Vitest wired up (npm test + placeholder npm run
+    cheat), GitHub Actions CI added. Live domain is dgcbet.net, NOT
+    ashey.bet as step 03 says — Asher confirmed dgcbet.net is the real one,
+    roadmap text above is stale, worth fixing/clarifying later. Had to make
+    the GitHub repo PUBLIC: branch protection needs GitHub Pro on a private
+    repo, Asher chose public over paying or skipping the "can't merge
+    broken code" rule — no secrets in the repo, those stay in gitignored
+    .env.local. Vercel's GitHub App wasn't actually installed despite the
+    step 05 checkbox (that was just "signed into Vercel with GitHub", not
+    real repo access) — Asher connected it himself via vercel.com/new.
+    Deployed and dgcbet.net confirmed serving HTTPS successfully.
 
     2026-09-13 — .env.local + .gitignore created, keys for Supabase,
     Upstash, Resend, Sentry, PostHog fetched (with Claude driving the
