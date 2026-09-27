@@ -1,26 +1,177 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  Design tokens. Every colour on the site comes from this file.
+
+  Components never use a raw colour. They use a token name (bg-surface,
+  text-fg-muted, border-border ...) and the token changes value between
+  light and dark. Tailwind's built-in palette is switched off below, so a
+  class like bg-black or text-blue-500 simply does nothing.
+
+  Theme choice: follows the device setting by default. Putting
+  data-theme="light" or data-theme="dark" on any element forces that
+  theme for everything inside it.
+
+  All text colours were checked for contrast (4.5:1 or better against
+  bg, surface and inset). border-strong is 3:1 or better against surface,
+  so input edges are visible.
+*/
+
+/* ---------- Light values ---------- */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f3f5fa;
+  --surface: #ffffff;
+  --surface-hover: #eceff7;
+  --inset: #f3f5fa;
+  --border: #d9deeb;
+  --border-strong: #8390b0;
+
+  --fg: #0b1230;
+  --fg-muted: #4a5578;
+  --fg-subtle: #5f6987;
+
+  --accent: #1f5eff;
+  --accent-hover: #1a50e0;
+  --accent-fg: #ffffff;
+  --accent-text: #1a50e0;
+
+  --win: #0f7a4a;
+  --loss: #c8283a;
+  --warn: #8a5a00;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* ---------- Dark values ---------- */
+/* Written twice on purpose: once for "device says dark", once for a forced
+   data-theme="dark". CSS has no way to share one block between the two. */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --bg: #0a1024;
+    --surface: #111a33;
+    --surface-hover: #18234a;
+    --inset: #070c1c;
+    --border: #243154;
+    --border-strong: #56679b;
+
+    --fg: #e8edfa;
+    --fg-muted: #a3aecd;
+    --fg-subtle: #7a86a8;
+
+    --accent: #2862f5;
+    --accent-hover: #3b73ff;
+    --accent-fg: #ffffff;
+    --accent-text: #6b9bff;
+
+    --win: #3ad98f;
+    --loss: #ff6b78;
+    --warn: #ffbe55;
   }
 }
 
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0a1024;
+  --surface: #111a33;
+  --surface-hover: #18234a;
+  --inset: #070c1c;
+  --border: #243154;
+  --border-strong: #56679b;
+
+  --fg: #e8edfa;
+  --fg-muted: #a3aecd;
+  --fg-subtle: #7a86a8;
+
+  --accent: #2862f5;
+  --accent-hover: #3b73ff;
+  --accent-fg: #ffffff;
+  --accent-text: #6b9bff;
+
+  --win: #3ad98f;
+  --loss: #ff6b78;
+  --warn: #ffbe55;
+}
+
+/* ---------- Token names Tailwind understands ---------- */
+@theme inline {
+  /* Switch off Tailwind's own palette. Only the tokens below exist. */
+  --color-*: initial;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-inset: var(--inset);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-text: var(--accent-text);
+  --color-accent-soft: color-mix(in oklab, var(--accent) 16%, transparent);
+
+  --color-win: var(--win);
+  --color-win-soft: color-mix(in oklab, var(--win) 14%, transparent);
+  --color-loss: var(--loss);
+  --color-loss-soft: color-mix(in oklab, var(--loss) 14%, transparent);
+  --color-warn: var(--warn);
+  --color-warn-soft: color-mix(in oklab, var(--warn) 14%, transparent);
+
+  /* Fonts. Geist for words, Geist Mono for every number a player reads. */
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Type scale. Roughly x1.25 per step. Only these sizes exist. */
+  --text-*: initial;
+  --text-xs: 0.75rem; /* 12px  labels, table headers */
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem; /* 14px  secondary text, table cells */
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem; /* 16px  body */
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.25rem; /* 20px  card titles */
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.5rem; /* 24px  section headings */
+  --text-xl--line-height: 2rem;
+  --text-2xl: 2rem; /* 32px  page headings */
+  --text-2xl--line-height: 2.5rem;
+  --text-3xl: 2.5rem; /* 40px  big numbers, multipliers */
+  --text-3xl--line-height: 1;
+  --text-4xl: 3.5rem; /* 56px  hero, crash multiplier */
+  --text-4xl--line-height: 1;
+
+  /*
+    Spacing scale. Tailwind's base step is 4px, so p-1 = 4px, p-4 = 16px.
+    Use only these steps: 1, 2, 3, 4, 6, 8, 12, 16, 24
+    (4, 8, 12, 16, 24, 32, 48, 64, 96 px).
+    Named spacing for the three gaps used everywhere:
+  */
+  --spacing-gutter: 1rem; /* 16px  page edge on phones, gap between cards */
+  --spacing-card: 1.5rem; /* 24px  padding inside a card */
+  --spacing-section: 4rem; /* 64px  gap between page sections */
+
+  /* Corners */
+  --radius-sm: 0.375rem; /* 6px   badges, small controls */
+  --radius-md: 0.625rem; /* 10px  buttons, inputs */
+  --radius-lg: 0.875rem; /* 14px  cards, panels */
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+}
+
+/* One focus ring for everything a keyboard can reach. */
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
 }

@@ -5,10 +5,10 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: Session 02 done — CLAUDE.md refreshed against the real
-                  project structure, VOICE.md written.
-    NEXT UP:      Build session 03 — design system: colour tokens, type
-                  scale, light and dark, component gallery
+    LAST SESSION: Session 03 done — design tokens (light + dark), type and
+                  spacing scales, component gallery at /design.
+    NEXT UP:      Build session 04 — accounts, wallet, append-only ledger.
+                  Four cheating tests written and shown failing first.
     BLOCKED ON:   nothing
 
 ---
@@ -46,7 +46,7 @@ Model: **Sonnet** for all of these — Asher is on the Pro plan.
 One session per sitting. Fresh conversation each time. Commit at the end.
 
 - [x] 02 VOICE.md written, CLAUDE.md refreshed against the real project
-- [ ] 03 Design system: colour tokens, type scale, light and dark, component gallery
+- [x] 03 Design system: colour tokens, type scale, light and dark, component gallery
 - [ ] 04 Accounts, wallet, append-only ledger
       MUST: four cheating tests written and shown failing before any fix
       (duplicate bet, oversized bet, simultaneous requests, negative balance)
@@ -94,6 +94,22 @@ Also in CLAUDE.md. Repeated here because they matter most.
 
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time.
+
+    2026-09-27 — Session 03 done. All colours are tokens in
+    src/app/globals.css (navy bg, one electric-blue accent, win/loss/warn
+    for results only), light + dark, contrast-checked (text 4.5:1+, input
+    borders 3:1+). Tailwind's own palette and text sizes are switched off,
+    so bg-black / text-blue-500 do nothing; tests/design-tokens.test.ts
+    fails if a raw colour sneaks into src/. Type scale xs-4xl (12-56px),
+    Geist + Geist Mono for numbers, 4px spacing grid plus named gutter /
+    card / section gaps. Components in src/components/ui/: button, input
+    (Field, Input, Switch, SegmentedControl), card, badge, table, feed row,
+    bet panel shell (Manual/Auto, layout only, buttons wired to nothing).
+    Gallery at /design (noindex) with a Light/Dark/System preview switch.
+    Holding page moved onto tokens, so it is navy now, not black. Added
+    .claude/launch.json so the dev server can be previewed. No game logic,
+    no new dependencies. Watch: pass extra display classes on a wrapper,
+    not on Button itself; they can lose to its built-in inline-flex.
 
     2026-09-27 — Session 02 done. CLAUDE.md refreshed against the real
     project: added a "Where things live" section (src/app, tests/,
