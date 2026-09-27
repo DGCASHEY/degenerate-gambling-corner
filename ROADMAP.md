@@ -5,11 +5,10 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: Day one, step 13 — mascot character sheet generated
-                  (Higgsfield/gpt_image_2_5) and saved to
-                  public/mascot/character-sheet.png. Day one is complete.
-    NEXT UP:      Build session 02 — VOICE.md written, CLAUDE.md refreshed
-                  against the real project
+    LAST SESSION: Session 02 done — CLAUDE.md refreshed against the real
+                  project structure, VOICE.md written.
+    NEXT UP:      Build session 03 — design system: colour tokens, type
+                  scale, light and dark, component gallery
     BLOCKED ON:   nothing
 
 ---
@@ -46,7 +45,7 @@ Marks: `[ ]` not started · `[~]` in progress · `[x]` done
 Model: **Sonnet** for all of these — Asher is on the Pro plan.
 One session per sitting. Fresh conversation each time. Commit at the end.
 
-- [ ] 02 VOICE.md written, CLAUDE.md refreshed against the real project
+- [x] 02 VOICE.md written, CLAUDE.md refreshed against the real project
 - [ ] 03 Design system: colour tokens, type scale, light and dark, component gallery
 - [ ] 04 Accounts, wallet, append-only ledger
       MUST: four cheating tests written and shown failing before any fix
@@ -95,6 +94,18 @@ Also in CLAUDE.md. Repeated here because they matter most.
 
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time.
+
+    2026-09-27 — Session 02 done. CLAUDE.md refreshed against the real
+    project: added a "Where things live" section (src/app, tests/,
+    tests/cheat/, public/mascot/, the CI workflow, the live dgcbet.net
+    domain), added npm run lint to Commands, and removed the "Player-facing
+    writing follows VOICE.md" line since VOICE.md didn't exist yet. Then
+    Asher pasted VOICE.md verbatim (the honest-to-the-point-of-rudeness
+    voice thesis, mascot tone, do/don't rules, sounds-right/sounds-wrong
+    examples) and it was written exactly as given, no additions. Added the
+    VOICE.md reference back to CLAUDE.md's Elsewhere section now that the
+    file is real. Words we use and the never-broken rules were left alone —
+    nothing there was stale.
 
     2026-09-27 — Step 13 done. Mascot: a scrappy anthropomorphic raccoon
     gambler in a rumpled navy velvet smoking jacket with electric-blue

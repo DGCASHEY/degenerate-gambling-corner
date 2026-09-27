@@ -44,11 +44,26 @@ session, before committing.
 - Incognito - three separate per-user switches: show in feed, show on
   leaderboard, public profile.
 
+## Where things live
+
+- src/app - Next.js App Router. Pages and layout live here. The holding
+  page is src/app/page.tsx.
+- tests/ - Vitest tests, run with npm test.
+- tests/cheat/ - the exploit tests, run separately with npm run cheat.
+  Everything that touches coins, outcomes or fairness gets a test here
+  before it ships.
+- public/mascot/ - character art. character-sheet.png is the raccoon
+  mascot reference sheet.
+- .github/workflows/ci.yml - runs lint, test, cheat and build on every
+  push and pull request to main.
+- Live site: dgcbet.net, deployed on Vercel from this repo's main branch.
+
 ## Commands
 
 - npm run dev   - start the site locally
 - npm test      - run the test suite
 - npm run cheat - the exploit tests. These pass before anything is committed.
+- npm run lint  - check code style. CI runs this too.
 
 ## Elsewhere
 
