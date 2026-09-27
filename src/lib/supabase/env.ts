@@ -10,6 +10,13 @@ function required(name: string, value: string | undefined): string {
   return value;
 }
 
+// True when the two settings the login cookie needs are present.
+export function supabaseAuthConfigured(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+}
+
 export function supabaseUrl(): string {
   return required("NEXT_PUBLIC_SUPABASE_URL", process.env.NEXT_PUBLIC_SUPABASE_URL);
 }

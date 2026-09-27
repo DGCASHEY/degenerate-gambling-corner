@@ -123,6 +123,11 @@ watch next time.
     account confirmed by hand in Supabase before we realised), signed in,
     claimed both taps. Ledger: welcome +5,000, hourly +200, daily +1,000,
     balance 6,200. Exactly one line per claim.
+    Outage on first push: every live page returned 500, most likely the
+    Supabase settings not reaching the Vercel build (src/proxy.ts threw on
+    every request). Fixed so a missing setting only breaks sign-in:
+    the proxy now skips the login refresh and logs an error instead
+    (src/proxy.test.ts). Asher checking the Vercel variables + redeploy.
     STILL TO DO before pushing, all Asher's hands:
       1. (done — see above)
       2. Vercel: add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,

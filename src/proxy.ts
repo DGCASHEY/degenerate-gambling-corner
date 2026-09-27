@@ -1,12 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { supabaseAnonKey, supabaseUrl } from "./lib/supabase/env";
+import { supabaseAnonKey, supabaseAuthConfigured, supabaseUrl } from "./lib/supabase/env";
 
 // Runs before each page request and refreshes the player's login cookie
 // if it is about to expire. It does not decide who may do what; every page
 // and action checks that for itself.
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
+
+  // A missing setting should break sign-in, not every page on the site.
+  if (!supabaseAuthConfigured()) {
+    console.error(
+      "Supabase settings missing: NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY. Login refresh skipped.",
+    );
+    return response;
+  }
 
   const supabase = createServerClient(supabaseUrl(), supabaseAnonKey(), {
     cookies: {
