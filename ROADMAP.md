@@ -7,8 +7,8 @@ session. It is the memory between conversations.
 
     LAST SESSION: Session 04 built — wallet, ledger, faucet, sign-up/in,
                   account page. 36 cheat tests pass. NOT PUSHED yet.
-    NEXT UP:      Finish 04: Asher signs up locally to prove it end to end,
-                  Vercel env vars + Supabase auth URLs set, then push.
+    NEXT UP:      Finish 04: Vercel env vars + Supabase auth URLs set,
+                  then push. (Local sign-up already proven end to end.)
                   Then session 05 — fairness engine and verifier page.
     BLOCKED ON:   Asher: Vercel environment variables, Supabase auth
                   redirect URLs (see 2026-09-27 session 04 note)
@@ -118,18 +118,22 @@ watch next time.
     is deliberate. New packages: @supabase/supabase-js, @supabase/ssr,
     pg, @types/pg, embedded-postgres (pinned 17.10.0-beta.17; "beta" is
     the package's label, Postgres itself is stable).
+    Proven locally: Asher signed up as "deboss", confirmation email
+    arrived (it was in a different inbox than expected, so I marked the
+    account confirmed by hand in Supabase before we realised), signed in,
+    claimed both taps. Ledger: welcome +5,000, hourly +200, daily +1,000,
+    balance 6,200. Exactly one line per claim.
     STILL TO DO before pushing, all Asher's hands:
-      1. Sign up at localhost:3000/signup with your own email (Supabase's
-         built-in email only delivers to project team members).
+      1. (done — see above)
       2. Vercel: add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,
          SUPABASE_SERVICE_ROLE_KEY. Without them the live site breaks on
          every page, because src/proxy.ts runs on every request.
       3. Supabase > Authentication > URL Configuration: add
          https://dgcbet.net/** and http://localhost:3000/** as redirect URLs.
     Watch: CI on Linux may need npm to allow embedded-postgres's install
-    script (it was blocked locally, harmless on Windows). Real players
-    will need Supabase to send email through Resend (custom SMTP) before
-    launch. The Claude connection to Vercel can't see this team's
+    script (it was blocked locally, harmless on Windows). Supabase's
+    built-in email does work, but only sends about 2 an hour, so real
+    players will need it sent through Resend (custom SMTP) before launch. The Claude connection to Vercel can't see this team's
     settings; needs re-authorising if we want Claude to check them.
 
     2026-09-27 — Session 03 done. All colours are tokens in
