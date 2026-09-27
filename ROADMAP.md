@@ -100,11 +100,17 @@ watch next time.
     gambler in a rumpled navy velvet smoking jacket with electric-blue
     lapels, gold chain, cards + chips in hand — matches the dark
     navy/electric blue brand palette. Generated via Higgsfield
-    (gpt_image_2_5), 2 variants, saved the stronger one to
-    public/mascot/character-sheet.png (front/side/three-quarter turnaround
-    + winning/losing/bored/smug expressions, single 2688x1520 sheet, not
-    yet cropped into individual sprites — that's follow-up work whenever
-    it's needed for real UI use).
+    (gpt_image_2_5), front/side/three-quarter turnaround +
+    winning/losing/bored/smug expressions, single 2688x1520 sheet, not yet
+    cropped into individual sprites — that's follow-up work whenever it's
+    needed for real UI use. First pass had an AI hand glitch (a duplicate
+    hand stacked at the wrist in the side and three-quarter poses, where
+    the cards-hand and chips-hand overlapped) — Asher caught it, fixed by
+    regenerating with explicit "no extra hands / no duplicate hands /
+    hands never overlapping" added to the prompt, verified clean by
+    cropping and inspecting each hand closely before saving over
+    public/mascot/character-sheet.png. Worth remembering for any future
+    multi-limb character art: check hands closely before calling it done.
 
     2026-09-27 — Step 12 done. Scaffolded Next.js/TS/Tailwind (App Router),
     holding page live, Vitest wired up (npm test + placeholder npm run
