@@ -5,10 +5,11 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: Day one, step 12 — Next.js + TS + Tailwind scaffolded,
-                  GitHub CI + branch protection on, deployed to Vercel,
-                  dgcbet.net live over HTTPS with the holding page
-    NEXT UP:      Day one, step 13 — mascot character sheet
+    LAST SESSION: Day one, step 13 — mascot character sheet generated
+                  (Higgsfield/gpt_image_2_5) and saved to
+                  public/mascot/character-sheet.png. Day one is complete.
+    NEXT UP:      Build session 02 — VOICE.md written, CLAUDE.md refreshed
+                  against the real project
     BLOCKED ON:   nothing
 
 ---
@@ -38,7 +39,7 @@ Marks: `[ ]` not started · `[~]` in progress · `[x]` done
 - [x] 10 .env.local created, keys pasted in, .gitignore excludes it
 - [x] 11 CLAUDE.md written
 - [x] 12 Project scaffolded, deployed, dgcbet.net shows a holding page
-- [ ] 13 Mascot character sheet generated
+- [x] 13 Mascot character sheet generated
 
 ## Build sessions
 
@@ -94,6 +95,16 @@ Also in CLAUDE.md. Repeated here because they matter most.
 
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time.
+
+    2026-09-27 — Step 13 done. Mascot: a scrappy anthropomorphic raccoon
+    gambler in a rumpled navy velvet smoking jacket with electric-blue
+    lapels, gold chain, cards + chips in hand — matches the dark
+    navy/electric blue brand palette. Generated via Higgsfield
+    (gpt_image_2_5), 2 variants, saved the stronger one to
+    public/mascot/character-sheet.png (front/side/three-quarter turnaround
+    + winning/losing/bored/smug expressions, single 2688x1520 sheet, not
+    yet cropped into individual sprites — that's follow-up work whenever
+    it's needed for real UI use).
 
     2026-09-27 — Step 12 done. Scaffolded Next.js/TS/Tailwind (App Router),
     holding page live, Vitest wired up (npm test + placeholder npm run
