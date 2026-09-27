@@ -13,3 +13,9 @@ out/
 
 # Editor/OS noise
 .DS_Store
+
+# Vercel CLI
+.vercel
+
+# TypeScript build info
+*.tsbuildinfo
