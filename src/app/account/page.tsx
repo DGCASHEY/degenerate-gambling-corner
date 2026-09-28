@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Button } from "../../components/ui/button";
+import { Button, ButtonLink } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
 import { formatCoins } from "../../components/ui/format";
 import { getRevealedSeeds, getSeedStatus } from "../../lib/seeds";
@@ -38,9 +38,12 @@ export default async function AccountPage() {
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-gutter py-12">
       <header className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">{account.username}</h1>
-        <form action={signOut}>
-          <Button type="submit" variant="ghost">Sign out</Button>
-        </form>
+        <div className="flex items-center gap-2">
+          <ButtonLink href="/" variant="secondary">Home</ButtonLink>
+          <form action={signOut}>
+            <Button type="submit" variant="ghost">Sign out</Button>
+          </form>
+        </div>
       </header>
 
       <Card title="Balance" description="Play coins. Worth nothing, can't be bought, can't be cashed out.">

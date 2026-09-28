@@ -123,6 +123,11 @@ Also in CLAUDE.md. Repeated here because they matter most.
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time.
 
+    2026-09-28 — Small fix before session 06, at Asher's request: a
+    "Home" button on /account (top row, next to Sign out), using the
+    existing ButtonLink. Lint and 115 tests pass. Not yet seen on screen
+    signed in (Claude can't type the password); check it live.
+
     2026-09-28 — Session 05 done. Provably fair, all in
     supabase/migrations/20260927140000_fairness.sql (applied to Supabase):
     seed_pairs table, each pair waiting -> live -> revealed. Secret = 32
