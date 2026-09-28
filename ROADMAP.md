@@ -7,8 +7,10 @@ session. It is the memory between conversations.
 
     LAST SESSION: Homepage (between 04 and 05) — sign-in links,
                   balance, games grid, "what works" cards, mascot.
+                  Live on dgcbet.net, CI green.
     NEXT UP:      Build session 05 — fairness engine and the public
-                  verifier page.
+                  verifier page. At the end, update the homepage's
+                  "Fairness" card (src/app/home-view.tsx) to link to it.
     BLOCKED ON:   nothing
 
 ---
@@ -86,8 +88,10 @@ Small jobs that don't belong to a session. Pick off when there's a gap.
       Asher enters the Resend key in Supabase (Claude can't handle keys).
 - [x] Homepage has no sign-in or sign-up link yet. Players must type
       /signup or /login. (Fixed by the homepage, 2026-09-27.)
+- [ ] Sign in on dgcbet.net and check the homepage top bar shows your
+      username and balance. Covered by a test, not yet seen on screen.
 - [ ] GitHub lets admins push to main without the checks passing (seen
-      on the session 03 push). Tick "include administrators" in branch
+      on the session 03 push, and again on the homepage push). Tick "include administrators" in branch
       protection, or switch to pull requests per session.
 - [ ] Re-authorise the Claude connection to Vercel for this team, so
       Claude can read runtime logs and settings (currently 403).
@@ -132,6 +136,11 @@ watch next time.
     folder, so a second chat can't start its own preview; view the
     existing one on :3000 instead. Follow-up the same day: badges no
     longer wrap (badge.tsx: whitespace-nowrap), pushed and live.
+    Both pushes: lint, 82 tests, 36 cheat tests and build passed locally
+    and in CI; live dgcbet.net checked signed out (hero, mascot, nine
+    "Not built yet" cards). Signed-in top bar not yet seen live — in
+    Loose ends. Next: session 05, then point the Fairness card at the
+    verifier.
 
     2026-09-27/28 — Session 04 done and live on dgcbet.net. Asher chose to do
     sign-in in the same session (flagged as two concerns, overridden).
