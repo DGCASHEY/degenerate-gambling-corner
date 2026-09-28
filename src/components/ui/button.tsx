@@ -1,4 +1,5 @@
-import type { ButtonHTMLAttributes } from "react";
+import Link from "next/link";
+import type { ButtonHTMLAttributes, ComponentProps } from "react";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
@@ -23,6 +24,10 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   fullWidth?: boolean;
 };
 
+function buttonClasses(variant: Variant, size: Size, fullWidth: boolean, className: string) {
+  return `inline-flex items-center justify-center gap-2 rounded-md font-semibold whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-40 ${variants[variant]} ${sizes[size]} ${fullWidth ? "w-full" : ""} ${className}`;
+}
+
 export function Button({
   variant = "primary",
   size = "md",
@@ -34,8 +39,20 @@ export function Button({
   return (
     <button
       type={type}
-      className={`inline-flex items-center justify-center gap-2 rounded-md font-semibold whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-40 ${variants[variant]} ${sizes[size]} ${fullWidth ? "w-full" : ""} ${className}`}
+      className={buttonClasses(variant, size, fullWidth, className)}
       {...rest}
     />
   );
+}
+
+// A link that looks exactly like a Button. For going somewhere, not doing
+// something.
+export function ButtonLink({
+  variant = "primary",
+  size = "md",
+  fullWidth = false,
+  className = "",
+  ...rest
+}: ComponentProps<typeof Link> & { variant?: Variant; size?: Size; fullWidth?: boolean }) {
+  return <Link className={buttonClasses(variant, size, fullWidth, className)} {...rest} />;
 }

@@ -5,8 +5,8 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: Session 04 done and live — wallet, ledger, faucet,
-                  sign-up/in, account page. Proven on dgcbet.net.
+    LAST SESSION: Homepage (between 04 and 05) — sign-in links,
+                  balance, games grid, "what works" cards, mascot.
     NEXT UP:      Build session 05 — fairness engine and the public
                   verifier page.
     BLOCKED ON:   nothing
@@ -84,8 +84,8 @@ Small jobs that don't belong to a session. Pick off when there's a gap.
 - [ ] Supabase email through Resend (custom SMTP) before real players
       arrive. Built-in email works but only sends about 2 an hour.
       Asher enters the Resend key in Supabase (Claude can't handle keys).
-- [ ] Homepage has no sign-in or sign-up link yet. Players must type
-      /signup or /login.
+- [x] Homepage has no sign-in or sign-up link yet. Players must type
+      /signup or /login. (Fixed by the homepage, 2026-09-27.)
 - [ ] GitHub lets admins push to main without the checks passing (seen
       on the session 03 push). Tick "include administrators" in branch
       protection, or switch to pull requests per session.
@@ -114,6 +114,23 @@ Also in CLAUDE.md. Repeated here because they matter most.
 
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time.
+
+    2026-09-27 — Homepage, done between sessions 04 and 05 at Asher's
+    request. Top bar: Sign in / Create account when signed out; username
+    + ledger balance (read only) when signed in. Hero line in VOICE.md
+    style with the smug raccoon, cropped from the character sheet into
+    public/mascot/smug.png (Windows' built-in System.Drawing, no new
+    package). Games grid comes from ONE list, src/lib/games.ts: when a
+    game ships, give it an href there and its card becomes a link. Also
+    "What works right now" cards (faucet, ledger, incognito, fairness —
+    update the fairness card after session 05). Page is split into
+    page.tsx (loads the player) and home-view.tsx (draws it). If the
+    Supabase lookup fails, the homepage falls back to signed-out instead
+    of a 500 (tested). Added ButtonLink to button.tsx: a link styled
+    exactly like Button. Checked at phone width: no sideways scroll,
+    site name shortens to "DGC". Watch: only one `next dev` can run per
+    folder, so a second chat can't start its own preview; view the
+    existing one on :3000 instead.
 
     2026-09-27/28 — Session 04 done and live on dgcbet.net. Asher chose to do
     sign-in in the same session (flagged as two concerns, overridden).
