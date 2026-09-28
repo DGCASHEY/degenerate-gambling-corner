@@ -5,11 +5,12 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: 06 — working bet panel (Manual/Auto, keys), Dice at
-                  /dice, Dice line on the verifier. Million-round check
-                  passes. Migrations on Supabase; Asher played 66 rounds.
-    NEXT UP:      Build session 07 — Limbo, Wheel, Keno, each on the
-                  shared BetPanel, following play_dice's pattern.
+    LAST SESSION: 07 — Limbo, Wheel, Keno at /limbo /wheel /keno, each
+                  following play_dice's pattern, each with a passing
+                  million-round check. Migrations on Supabase (pasted);
+                  Asher played all three. Pushed to dgcbet.net.
+    NEXT UP:      Build session 08 — capture the pattern as /newgame,
+                  then prove it with `/newgame Hilo`.
     BLOCKED ON:   nothing
 
 ---
@@ -54,7 +55,7 @@ One session per sitting. Fresh conversation each time. Commit at the end.
 - [x] 05 Fairness engine and the public verifier page
 - [x] 06 Shared bet panel (manual and auto) and Dice
       MUST: one million simulated rounds match the predicted win rate
-- [ ] 07 Limbo, Wheel, Keno
+- [x] 07 Limbo, Wheel, Keno
 - [ ] 08 Capture the pattern as /newgame, then prove it with `/newgame Hilo`
 - [ ] 09 Mines — server-held board, double-cash-out test written first
 - [ ] 10 Plinko — server decides the slot, the animation follows it
@@ -98,16 +99,22 @@ Small jobs that don't belong to a session. Pick off when there's a gap.
       scopes, noted 2026-09-13).
 - [ ] Supabase security check says "Leaked password protection" is off
       (Authentication settings). Switching it on refuses passwords known
-      from data leaks. Asher's call; noted 2026-09-28.
+      from data leaks. Asher's call; noted 2026-09-27.
 - [ ] Every balance check re-adds the player's whole ledger (get_balance,
       and the never-negative trigger, so twice per bet). Fine today, but
       10,000 bets in a row already take ~13 ms each by the end, and a
       heavy player will slow down over months. Needs its own session and
-      its own failing tests; don't fix it in passing. Noted 2026-09-28.
+      its own failing tests; don't fix it in passing. Noted 2026-09-27.
 - [ ] CI runs every cheat test twice (npm test includes tests/cheat, then
-      npm run cheat runs them again). The dice odds test takes ~3.5 min,
-      so each push spends ~7 min on it. Consider excluding tests/cheat
-      from npm test. Noted 2026-09-28.
+      npm run cheat runs them again). Since session 07 there are four
+      million-round tests (dice ~3.5 min, limbo ~3, wheel ~2.5, keno ~5
+      on Asher's PC), so each push spends ~25-30 min on them. Consider
+      excluding tests/cheat from npm test. More urgent now. Noted
+      2026-09-27, updated after session 07.
+- [ ] Migrations since session 06 were pasted into Supabase's SQL
+      Editor, so Supabase's migration history list doesn't show them.
+      The files in supabase/migrations are the record. Fine for now;
+      worth squaring up before anyone else touches the database.
 
 ---
 
@@ -128,9 +135,49 @@ Also in CLAUDE.md. Repeated here because they matter most.
 ## Session notes
 
 Newest at the top. One or two lines each: what got done, what broke, what to
-watch next time.
+watch next time. Dates are Asher's local time (US Eastern).
 
-    2026-09-28 — Session 06 done. Finish: auto mode blocked Claude
+    2026-09-27 — Session 07 done: Limbo, Wheel and Keno, all three in one
+    session at Asher's request. Each copies Dice exactly: a migration
+    with the maths, an append-only <game>_rounds table and play_<game>
+    (place_bet + take_spin + result + payout line, one transaction,
+    repeated key returns the first round); the same maths in
+    src/lib/<game>.ts for display and the verifier only; play<Game> in
+    wallet.ts; a server action; a page on the shared BetPanel; a line on
+    /fairness; an href in games.ts. Ledger and fairness engine untouched.
+    Asher's choices: Limbo targets 1.01x-1,000,000x, result = 99 x 2^32 /
+    (2^32 - k) rounded down, edge 1%. Wheel: 30 segments, low / medium /
+    high tables each summing to 29.70 (edge exactly 1%). Keno: 40
+    numbers, 10 drawn (take_spin with 10 numbers, each picks from what
+    is left), one pay table for 1-10 picks, multipliers rounded down so
+    edges run 1.00% (1 pick) to 1.22% (4 picks); the page prints them.
+    Tests first: 30 + 27 + 34 new cheat tests, each file shown failing
+    (placeholder libs that throw, so every test fails on its own; every
+    refusal demands its exact error). Million-round checks, fresh secret
+    each: every Limbo target, every Wheel multiplier and every Keno hit
+    count within 2.6 standard errors (pass mark 4.5), returns match the
+    theory; plus 10,000 real auto bets per game through the ledger.
+    Totals: 277 tests (193 cheat), lint, build all pass.
+    Changed from the plan, with Asher's OK: BetPanel used a missing
+    profitOnWin to mean "settings invalid", so Wheel/Keno's Place bet was
+    greyed out. Now betting only switches off when a game gives a
+    profitOnWin that returns null; games without one show "Varies, see
+    the table" (src/components/ui/bet-panel.test.tsx, shown failing
+    first). Asher's other asks: Wheel shows the result, balance and
+    history only after the wheel stops (1.2 s; none with reduce-motion),
+    so Wheel auto runs about one spin every 1.4 s. Wheel colours: dark =
+    pays nothing, half blue = under 2x, blue = 2x+; green/red only
+    outline the landed segment. Verifier's default count is now 10 so
+    Keno's line shows.
+    Supabase: Asher pasted the three migrations. Checked read-only after
+    each: functions, guards, browser locked out. After play: 17 Limbo,
+    16 Wheel, 22 Keno rounds, every bet and payout line correct, no
+    negative balances.
+    Watch: a "stacked" Keno board was a stale browser tab. Ctrl+Shift+R
+    fixed it. Another chat's dev server was running on :3000 here, so
+    this session viewed that one.
+
+    2026-09-27 — Session 06 done. Finish: auto mode blocked Claude
     from applying the migrations (it counts as a production deploy), so
     Asher pasted both files into Supabase's SQL Editor. They are NOT in
     Supabase's migration history list; the files here are the record.
@@ -170,12 +217,12 @@ watch next time.
     164 tests, 96 cheat, lint, build pass. Checked in the browser:
     signed-out /dice, verifier's Dice line (62.32 for a known secret),
     panel at phone width. Not yet seen: a signed-in game.
-    2026-09-28 — Small fix before session 06, at Asher's request: a
+    2026-09-27 — Small fix before session 06, at Asher's request: a
     "Home" button on /account (top row, next to Sign out), using the
     existing ButtonLink. Lint and 115 tests pass. Not yet seen on screen
     signed in (Claude can't type the password); check it live.
 
-    2026-09-28 — Session 05 done. Provably fair, all in
+    2026-09-27 — Session 05 done. Provably fair, all in
     supabase/migrations/20260927140000_fairness.sql (applied to Supabase):
     seed_pairs table, each pair waiting -> live -> revealed. Secret = 32
     random bytes as 64 hex chars; fingerprint = SHA-256 of that text;
@@ -232,7 +279,7 @@ watch next time.
     Loose ends. Next: session 05, then point the Fairness card at the
     verifier.
 
-    2026-09-27/28 — Session 04 done and live on dgcbet.net. Asher chose to do
+    2026-09-27 — Session 04 done and live on dgcbet.net. Asher chose to do
     sign-in in the same session (flagged as two concerns, overridden).
     Decisions: new accounts get 5,000 (a one-time "welcome" faucet entry);
     two separate taps, hourly 200 and daily 1,000, claimable at any
@@ -266,7 +313,7 @@ watch next time.
     using Vercel's runtime Logs to see which was missing: first the URL,
     then the anon key (Supabase's newer screens call it "publishable"),
     then the service role key ("secret"). Each fix needed a redeploy.
-    Finished 2026-09-28 00:04 UTC: Asher signed in on dgcbet.net and the
+    Finished 2026-09-27 20:04 Eastern: Asher signed in on dgcbet.net and the
     account page's database requests were all accepted. Supabase redirect
     URLs for dgcbet.net and localhost are set.
     Lesson for next time: when a live page 500s, read Vercel's runtime

@@ -10,9 +10,9 @@ export type Game = {
 
 export const games: Game[] = [
   { name: "Dice", kind: "original", blurb: "Pick a number. Roll over or under it. The odds are the number.", href: "/dice" },
-  { name: "Limbo", kind: "original", blurb: "Name a multiplier. Hope the result clears it." },
-  { name: "Wheel", kind: "original", blurb: "A wheel. It spins. Most of it pays less than you bet." },
-  { name: "Keno", kind: "original", blurb: "Pick up to ten numbers. Watch most of them miss." },
+  { name: "Limbo", kind: "original", blurb: "Name a multiplier. Hope the result clears it.", href: "/limbo" },
+  { name: "Wheel", kind: "original", blurb: "A wheel. It spins. Most of it pays less than you bet.", href: "/wheel" },
+  { name: "Keno", kind: "original", blurb: "Pick up to ten numbers. Watch most of them miss.", href: "/keno" },
   { name: "Mines", kind: "original", blurb: "Open tiles until you cash out or find a mine." },
   { name: "Plinko", kind: "original", blurb: "Drop a ball. The server already knows where it lands." },
   { name: "Crash", kind: "original", blurb: "A number climbs until it doesn't. Everyone sees the same one." },

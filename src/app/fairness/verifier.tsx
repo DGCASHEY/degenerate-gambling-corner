@@ -6,6 +6,9 @@ import { Field, Input } from "../../components/ui/input";
 import { Table, Td, Th } from "../../components/ui/table";
 import { diceRoll } from "../../lib/dice";
 import { fairNumbers, fingerprint, MAX_NUMBERS_PER_SPIN } from "../../lib/fairness";
+import { kenoDraw } from "../../lib/keno";
+import { limboResult } from "../../lib/limbo";
+import { WHEELS, wheelSegment } from "../../lib/wheel";
 
 // Works out everything in the visitor's own browser. Nothing typed here is
 // sent anywhere.
@@ -29,7 +32,7 @@ export function Verifier({ initialSecret, initialWord, initialSpin, initialFinge
   const [secret, setSecret] = useState(initialSecret);
   const [word, setWord] = useState(initialWord);
   const [spin, setSpin] = useState(initialSpin);
-  const [count, setCount] = useState("8");
+  const [count, setCount] = useState("10");
   const [shown, setShown] = useState(initialFingerprint);
   const [worked, setWorked] = useState<Worked | null>(null);
 
@@ -133,6 +136,48 @@ export function Verifier({ initialSecret, initialWord, initialSpin, initialFinge
           <p className="font-mono text-2xl font-bold tabular-nums text-fg" data-testid="dice-roll">
             {(diceRoll(result.numbers[0]) / 100).toFixed(2)}
           </p>
+        ) : (
+          <p className="text-sm text-fg-subtle">Fill in the secret, word and spin number to see it.</p>
+        )}
+      </Card>
+
+      <Card title="Limbo result" description="99 × 2³² ÷ (2³² − the first number × 2³²), rounded down to 0.01×.">
+        {result?.numbers ? (
+          <p className="font-mono text-2xl font-bold tabular-nums text-fg" data-testid="limbo-result">
+            {(limboResult(result.numbers[0]) / 100).toFixed(2)}×
+          </p>
+        ) : (
+          <p className="text-sm text-fg-subtle">Fill in the secret, word and spin number to see it.</p>
+        )}
+      </Card>
+
+      <Card title="Wheel segment" description="The first number × 30, rounded down: 0 is at the pointer, counting clockwise.">
+        {result?.numbers ? (
+          <div className="flex flex-col gap-1">
+            <p className="font-mono text-2xl font-bold tabular-nums text-fg" data-testid="wheel-segment">
+              {wheelSegment(result.numbers[0])}
+            </p>
+            <p className="font-mono text-sm tabular-nums text-fg-muted">
+              low {(WHEELS.low[wheelSegment(result.numbers[0])] / 100).toFixed(2)}× · medium{" "}
+              {(WHEELS.medium[wheelSegment(result.numbers[0])] / 100).toFixed(2)}× · high{" "}
+              {(WHEELS.high[wheelSegment(result.numbers[0])] / 100).toFixed(2)}×
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm text-fg-subtle">Fill in the secret, word and spin number to see it.</p>
+        )}
+      </Card>
+
+      <Card
+        title="Keno draw"
+        description="The first 10 numbers. Each picks from what is left, lowest first: position = number × how many are left, rounded down."
+      >
+        {result?.numbers && result.numbers.length >= 10 ? (
+          <p className="font-mono text-2xl font-bold tabular-nums text-fg" data-testid="keno-draw">
+            {kenoDraw(result.numbers).join(" ")}
+          </p>
+        ) : result?.numbers ? (
+          <p className="text-sm text-fg-subtle">Keno needs 10 numbers. Ask for at least 10 above.</p>
         ) : (
           <p className="text-sm text-fg-subtle">Fill in the secret, word and spin number to see it.</p>
         )}

@@ -59,6 +59,22 @@ export default async function FairnessPage({ searchParams }: { searchParams: Sea
             hundredths (0.00 to 99.99). Under T wins below T, over T wins above T. A win pays the bet × 99 ÷
             win chance, rounded down to 0.01.
           </li>
+          <li>
+            <span className="text-fg">Limbo</span>: k = the first number × 2<sup>32</sup>. Result = 99 × 2
+            <sup>32</sup> ÷ (2<sup>32</sup> − k), rounded down to 0.01×, so never below 0.99×. A result at or
+            above your target wins and pays the bet × the target, rounded down to 0.01.
+          </li>
+          <li>
+            <span className="text-fg">Wheel</span>: segment = the first number × 30, rounded down (0 to 29,
+            clockwise from the pointer). It pays the bet × that segment&apos;s multiplier on your risk
+            level&apos;s wheel, rounded down to 0.01. Every multiplier is printed on the Wheel page.
+          </li>
+          <li>
+            <span className="text-fg">Keno</span>: start with 1 to 40 in order. For each of the first 10
+            numbers, take the one at position = number × how many are left, rounded down (0 is the lowest),
+            and remove it. Those 10 are the draw. It pays the bet × the table&apos;s multiplier for your pick
+            count and hits, rounded down to 0.01. The table is printed on the Keno page.
+          </li>
         </ol>
       </Card>
 

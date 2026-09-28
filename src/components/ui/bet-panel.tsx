@@ -22,7 +22,9 @@ type BetPanelProps = {
   // the panel is a lifeless demo (the /design gallery).
   onBet?: (amount: number) => Promise<BetOutcome>;
   // Coins gained if this amount wins, for the readout. null: the game's
-  // settings aren't valid yet, so betting is switched off.
+  // settings aren't valid yet, so betting is switched off. Leave it out for
+  // games where a win can pay several amounts (Wheel, Keno); the readout
+  // then points at the game's pay table.
   profitOnWin?: (amount: number) => number | null;
   // The game's own keys, e.g. { d: flip }. Space, A and S belong to the panel.
   shortcuts?: Record<string, { label: string; run: () => void }>;
@@ -162,7 +164,7 @@ export function BetPanel({ id, controls, stage, onBet, profitOnWin, shortcuts, o
     down !== undefined;
 
   const live = Boolean(onBet);
-  const canBet = live && amountValid && profit !== null && !busy;
+  const canBet = live && amountValid && (!profitOnWin || profit !== null) && !busy;
   const locked = busy || running;
 
   useEffect(() => onRunningChange?.(running), [running, onRunningChange]);
@@ -291,9 +293,15 @@ export function BetPanel({ id, controls, stage, onBet, profitOnWin, shortcuts, o
 
         <div className="flex items-baseline justify-between gap-2 rounded-md bg-inset px-3 py-2">
           <span className="text-xs font-medium text-fg-muted">Net gain on win</span>
-          <span className="font-mono text-sm tabular-nums text-win" data-testid="net-on-win">
-            {profit === null ? "—" : formatSignedUnits(profit)}
-          </span>
+          {profitOnWin || !live ? (
+            <span className="font-mono text-sm tabular-nums text-win" data-testid="net-on-win">
+              {profit === null ? "—" : formatSignedUnits(profit)}
+            </span>
+          ) : (
+            <span className="text-sm text-fg-muted" data-testid="net-on-win">
+              Varies, see the table
+            </span>
+          )}
         </div>
 
         {controls}

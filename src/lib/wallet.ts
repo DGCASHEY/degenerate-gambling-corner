@@ -152,3 +152,182 @@ export async function playDice(
     },
   };
 }
+
+export type LimboRound = {
+  roundId: number;
+  seedPairId: number;
+  // Check it at /fairness once this secret is revealed.
+  spin: number;
+  // Whole hundredths of a multiplier: 200 means 2.00x.
+  result: number;
+  won: boolean;
+  payout: number;
+  balance: number;
+  replayed: boolean;
+};
+
+// One Limbo round: the database takes the bet, draws the result with the
+// next spin, pays any win and remembers the round, all in one transaction.
+// A repeated idempotency key hands back the first round. Returns the
+// database's error code (e.g. "insufficient_balance") instead of throwing.
+export async function playLimbo(
+  id: string,
+  amount: number,
+  target: number,
+  idempotencyKey: string,
+): Promise<{ ok: true; round: LimboRound } | { ok: false; code: string }> {
+  const { data, error } = await serverClient()
+    .rpc("play_limbo", {
+      p_account: id,
+      p_amount: amount,
+      p_target: target,
+      p_key: idempotencyKey,
+    })
+    .single<{
+      round_id: number;
+      seed_pair_id: number;
+      spin: number;
+      result: number;
+      won: boolean;
+      payout: number;
+      balance: number;
+      replayed: boolean;
+    }>();
+  if (error) return { ok: false, code: error.message };
+  return {
+    ok: true,
+    round: {
+      roundId: Number(data.round_id),
+      seedPairId: Number(data.seed_pair_id),
+      spin: Number(data.spin),
+      result: Number(data.result),
+      won: data.won,
+      payout: Number(data.payout),
+      balance: Number(data.balance),
+      replayed: data.replayed,
+    },
+  };
+}
+
+export type WheelRound = {
+  roundId: number;
+  seedPairId: number;
+  // Check it at /fairness once this secret is revealed.
+  spin: number;
+  // 0 to 29, clockwise from the pointer.
+  segment: number;
+  // Whole hundredths: 150 means 1.50x.
+  multiplier: number;
+  won: boolean;
+  payout: number;
+  balance: number;
+  replayed: boolean;
+};
+
+// One Wheel round: the database takes the bet, lands the wheel with the next
+// spin, pays any win and remembers the round, all in one transaction. A
+// repeated idempotency key hands back the first round. Returns the
+// database's error code (e.g. "insufficient_balance") instead of throwing.
+export async function playWheel(
+  id: string,
+  amount: number,
+  risk: "low" | "medium" | "high",
+  idempotencyKey: string,
+): Promise<{ ok: true; round: WheelRound } | { ok: false; code: string }> {
+  const { data, error } = await serverClient()
+    .rpc("play_wheel", {
+      p_account: id,
+      p_amount: amount,
+      p_risk: risk,
+      p_key: idempotencyKey,
+    })
+    .single<{
+      round_id: number;
+      seed_pair_id: number;
+      spin: number;
+      segment: number;
+      multiplier: number;
+      won: boolean;
+      payout: number;
+      balance: number;
+      replayed: boolean;
+    }>();
+  if (error) return { ok: false, code: error.message };
+  return {
+    ok: true,
+    round: {
+      roundId: Number(data.round_id),
+      seedPairId: Number(data.seed_pair_id),
+      spin: Number(data.spin),
+      segment: Number(data.segment),
+      multiplier: Number(data.multiplier),
+      won: data.won,
+      payout: Number(data.payout),
+      balance: Number(data.balance),
+      replayed: data.replayed,
+    },
+  };
+}
+
+export type KenoRound = {
+  roundId: number;
+  seedPairId: number;
+  // Check it at /fairness once this secret is revealed.
+  spin: number;
+  // Ten numbers from 1 to 40, in the order drawn.
+  drawn: number[];
+  hits: number;
+  // Whole hundredths: 396 means 3.96x.
+  multiplier: number;
+  won: boolean;
+  payout: number;
+  balance: number;
+  replayed: boolean;
+};
+
+// One Keno round: the database takes the bet, draws ten numbers with the
+// next spin, pays any win and remembers the round, all in one transaction.
+// A repeated idempotency key hands back the first round. Returns the
+// database's error code (e.g. "insufficient_balance") instead of throwing.
+export async function playKeno(
+  id: string,
+  amount: number,
+  picks: number[],
+  idempotencyKey: string,
+): Promise<{ ok: true; round: KenoRound } | { ok: false; code: string }> {
+  const { data, error } = await serverClient()
+    .rpc("play_keno", {
+      p_account: id,
+      p_amount: amount,
+      p_picks: picks,
+      p_key: idempotencyKey,
+    })
+    .single<{
+      round_id: number;
+      seed_pair_id: number;
+      spin: number;
+      drawn: number[];
+      hits: number;
+      multiplier: number;
+      won: boolean;
+      payout: number;
+      balance: number;
+      replayed: boolean;
+    }>();
+  if (error) return { ok: false, code: error.message };
+  return {
+    ok: true,
+    round: {
+      roundId: Number(data.round_id),
+      seedPairId: Number(data.seed_pair_id),
+      spin: Number(data.spin),
+      drawn: data.drawn.map(Number),
+      hits: Number(data.hits),
+      multiplier: Number(data.multiplier),
+      won: data.won,
+      payout: Number(data.payout),
+      balance: Number(data.balance),
+      replayed: data.replayed,
+    },
+  };
+}

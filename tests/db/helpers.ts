@@ -224,3 +224,120 @@ export async function playDice(
     replayed: r.replayed,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Limbo
+// ---------------------------------------------------------------------------
+
+export type LimboResult = {
+  roundId: number;
+  seedPairId: number;
+  spin: number;
+  result: number;
+  won: boolean;
+  payout: number;
+  balance: number;
+  replayed: boolean;
+};
+
+// target and result are whole hundredths of a multiplier: 200 means 2.00x.
+export async function playLimbo(
+  db: pg.Client,
+  account: string,
+  amount: number,
+  target: number,
+  key: string,
+): Promise<LimboResult> {
+  const { rows } = await db.query("select * from public.play_limbo($1, $2, $3, $4)", [account, amount, target, key]);
+  const r = rows[0];
+  return {
+    roundId: Number(r.round_id),
+    seedPairId: Number(r.seed_pair_id),
+    spin: Number(r.spin),
+    result: Number(r.result),
+    won: r.won,
+    payout: Number(r.payout),
+    balance: Number(r.balance),
+    replayed: r.replayed,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Wheel
+// ---------------------------------------------------------------------------
+
+export type WheelResult = {
+  roundId: number;
+  seedPairId: number;
+  spin: number;
+  segment: number;
+  multiplier: number;
+  won: boolean;
+  payout: number;
+  balance: number;
+  replayed: boolean;
+};
+
+// segment is 0 to 29; multiplier is whole hundredths: 150 means 1.50x.
+export async function playWheel(
+  db: pg.Client,
+  account: string,
+  amount: number,
+  risk: string,
+  key: string,
+): Promise<WheelResult> {
+  const { rows } = await db.query("select * from public.play_wheel($1, $2, $3, $4)", [account, amount, risk, key]);
+  const r = rows[0];
+  return {
+    roundId: Number(r.round_id),
+    seedPairId: Number(r.seed_pair_id),
+    spin: Number(r.spin),
+    segment: r.segment,
+    multiplier: r.multiplier,
+    won: r.won,
+    payout: Number(r.payout),
+    balance: Number(r.balance),
+    replayed: r.replayed,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Keno
+// ---------------------------------------------------------------------------
+
+export type KenoResult = {
+  roundId: number;
+  seedPairId: number;
+  spin: number;
+  drawn: number[];
+  hits: number;
+  multiplier: number;
+  won: boolean;
+  payout: number;
+  balance: number;
+  replayed: boolean;
+};
+
+// picks and drawn are numbers from 1 to 40; multiplier is whole hundredths.
+export async function playKeno(
+  db: pg.Client,
+  account: string,
+  amount: number,
+  picks: number[],
+  key: string,
+): Promise<KenoResult> {
+  const { rows } = await db.query("select * from public.play_keno($1, $2, $3, $4)", [account, amount, picks, key]);
+  const r = rows[0];
+  return {
+    roundId: Number(r.round_id),
+    seedPairId: Number(r.seed_pair_id),
+    spin: Number(r.spin),
+    drawn: r.drawn,
+    hits: r.hits,
+    multiplier: r.multiplier,
+    won: r.won,
+    payout: Number(r.payout),
+    balance: Number(r.balance),
+    replayed: r.replayed,
+  };
+}
