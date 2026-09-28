@@ -39,6 +39,9 @@ export default async function setup(project: TestProject) {
     user: "postgres",
     password: "postgres",
     persistent: false,
+    // UTF-8 like Supabase. Without this, Windows picks WIN1252 and any
+    // emoji (say, in a client word) is refused.
+    initdbFlags: ["--encoding=UTF8", "--locale=C"],
     onLog: () => {},
   });
 

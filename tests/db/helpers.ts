@@ -100,3 +100,81 @@ export async function settle<T>(p: Promise<T>) {
     return { ok: false as const, error: (error as Error).message };
   }
 }
+
+// ---------------------------------------------------------------------------
+// Fairness: sealed secrets, client words and the spin counter
+// ---------------------------------------------------------------------------
+
+export type SeedStatus = {
+  fingerprint: string;
+  clientWord: string;
+  nextSpin: number;
+  // The secret that becomes live at the next rotation, sealed in advance.
+  nextFingerprint: string;
+};
+
+// What the player is shown: never the live secret itself.
+export async function seedStatus(db: pg.Client, account: string): Promise<SeedStatus> {
+  const { rows } = await db.query("select * from public.seed_status($1)", [account]);
+  return {
+    fingerprint: rows[0].server_seed_hash,
+    clientWord: rows[0].client_seed,
+    nextSpin: Number(rows[0].next_spin),
+    nextFingerprint: rows[0].next_server_seed_hash,
+  };
+}
+
+export async function rotateSeed(db: pg.Client, account: string, word: string | null) {
+  const { rows } = await db.query("select * from public.rotate_seed($1, $2)", [account, word]);
+  const r = rows[0];
+  return {
+    revealed: {
+      serverSeed: r.revealed_server_seed as string,
+      fingerprint: r.revealed_server_seed_hash as string,
+      clientWord: r.revealed_client_seed as string,
+      spins: Number(r.revealed_spins),
+    },
+    next: {
+      fingerprint: r.server_seed_hash as string,
+      clientWord: r.client_seed as string,
+      nextSpin: 0,
+      nextFingerprint: r.next_server_seed_hash as string,
+    },
+  };
+}
+
+export async function takeSpin(db: pg.Client, account: string, count: number) {
+  const { rows } = await db.query("select * from public.take_spin($1, $2)", [account, count]);
+  return {
+    seedPairId: Number(rows[0].seed_pair_id),
+    spin: Number(rows[0].spin),
+    numbers: rows[0].numbers as number[],
+  };
+}
+
+export async function revealedSeeds(db: pg.Client, account: string) {
+  const { rows } = await db.query("select * from public.revealed_seeds($1)", [account]);
+  return rows.map((r) => ({
+    serverSeed: r.server_seed as string,
+    fingerprint: r.server_seed_hash as string,
+    clientWord: r.client_seed as string,
+    spins: Number(r.spins),
+  }));
+}
+
+// The database's copy of the maths, called directly with chosen inputs.
+export async function sqlNumbers(
+  db: pg.Client,
+  serverSeed: string,
+  clientWord: string,
+  spin: number,
+  count: number,
+): Promise<number[]> {
+  const { rows } = await db.query("select public.fair_numbers($1, $2, $3, $4) as numbers", [
+    serverSeed,
+    clientWord,
+    spin,
+    count,
+  ]);
+  return rows[0].numbers;
+}

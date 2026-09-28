@@ -8,7 +8,7 @@ import { games } from "../lib/games";
 
 export type Player = { username: string; coins: number } | null;
 
-const working = [
+const working: { title: string; body: string; href?: string }[] = [
   {
     title: "The faucet",
     body: "5,000 coins when you sign up. 200 more every hour, 1,000 every day. That is the only way coins appear, apart from winning them back off us.",
@@ -23,7 +23,8 @@ const working = [
   },
   {
     title: "Fairness",
-    body: "Every result will be decided on our server and checkable by you afterwards. The verifier is being built next.",
+    body: "You see our secret's fingerprint before you bet, pick your own client word, and get the secret back when you change it. Then check every result yourself, in your own browser.",
+    href: "/fairness",
   },
 ];
 
@@ -113,9 +114,15 @@ export function HomeView({ player }: { player: Player }) {
         <section className="flex flex-col gap-4">
           <h2 className="text-xl font-semibold text-fg">What works right now</h2>
           <div className="grid gap-gutter sm:grid-cols-2">
-            {working.map((item) => (
-              <Card key={item.title} title={item.title} description={item.body} />
-            ))}
+            {working.map((item) =>
+              item.href ? (
+                <Link key={item.title} href={item.href} className="rounded-lg hover:ring-2 hover:ring-accent">
+                  <Card title={item.title} description={item.body} action={<Badge tone="accent">Check a result</Badge>} />
+                </Link>
+              ) : (
+                <Card key={item.title} title={item.title} description={item.body} />
+              ),
+            )}
           </div>
         </section>
       </main>

@@ -5,12 +5,13 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: Homepage (between 04 and 05) — sign-in links,
-                  balance, games grid, "what works" cards, mascot.
-                  Live on dgcbet.net, CI green.
-    NEXT UP:      Build session 05 — fairness engine and the public
-                  verifier page. At the end, update the homepage's
-                  "Fairness" card (src/app/home-view.tsx) to link to it.
+    LAST SESSION: 05 — provably fair seeds (sealed secret, client word,
+                  spin counter), public verifier at /fairness, Fairness
+                  card on /account. Migration applied to Supabase.
+    NEXT UP:      Build session 06 — shared bet panel and Dice. Dice
+                  gets its outcome from public.take_spin inside the same
+                  transaction as the bet, and adds a "Dice roll" line to
+                  the verifier.
     BLOCKED ON:   nothing
 
 ---
@@ -52,7 +53,7 @@ One session per sitting. Fresh conversation each time. Commit at the end.
 - [x] 04 Accounts, wallet, append-only ledger
       MUST: four cheating tests written and shown failing before any fix
       (duplicate bet, oversized bet, simultaneous requests, negative balance)
-- [ ] 05 Fairness engine and the public verifier page
+- [x] 05 Fairness engine and the public verifier page
 - [ ] 06 Shared bet panel (manual and auto) and Dice
       MUST: one million simulated rounds match the predicted win rate
 - [ ] 07 Limbo, Wheel, Keno
@@ -97,6 +98,9 @@ Small jobs that don't belong to a session. Pick off when there's a gap.
       Claude can read runtime logs and settings (currently 403).
 - [ ] Review the broad "Claude" OAuth connection in PostHog (147+ write
       scopes, noted 2026-09-13).
+- [ ] Supabase security check says "Leaked password protection" is off
+      (Authentication settings). Switching it on refuses passwords known
+      from data leaks. Asher's call; noted 2026-09-28.
 
 ---
 
@@ -118,6 +122,40 @@ Also in CLAUDE.md. Repeated here because they matter most.
 
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time.
+
+    2026-09-28 — Session 05 done. Provably fair, all in
+    supabase/migrations/20260927140000_fairness.sql (applied to Supabase):
+    seed_pairs table, each pair waiting -> live -> revealed. Secret = 32
+    random bytes as 64 hex chars; fingerprint = SHA-256 of that text;
+    numbers = HMAC-SHA256(secret, "word:spin:round"), 4 bytes each / 2^32.
+    A CHECK makes the fingerprint always match its secret; a trigger
+    seals everything else (counter only up, revealed pairs frozen); the
+    server can't delete; the browser can reach nothing. Games call
+    take_spin(account, count) inside the bet transaction: it returns
+    the spin number and numbers, never the secret. Same recipe in
+    src/lib/fairness.ts (Web Crypto, no new package) for the public
+    verifier at /fairness; src/lib/seeds.ts is the site's only way in.
+    Found and fixed a hole in my own first plan: the new secret was made
+    at the moment the player chose their word, so a crooked server could
+    reroll it. Now a NEXT secret is always sealed in advance and its
+    fingerprint shown on /account before the word is picked (tests first).
+    Tests: 28 new cheat tests, all shown failing first, incl. Asher's two
+    (same inputs = same answer across DB, browser and Node's crypto;
+    revealed secret matches the fingerprint shown earlier). One passed
+    before anything existed (table missing), so every refusal test now
+    demands its exact error. The emoji client word exposed that the test
+    database was WIN1252 on Windows; tests/db/global-setup.ts now forces
+    UTF-8 like Supabase. 115 tests, 64 cheat, lint, build all pass.
+    Proven: known-answer numbers match in Supabase; verifier page shows
+    them and says "Does not match" for a one-character change; no
+    sideways scroll on a phone. Asher rotated twice on localhost/account
+    and "Check it" said Matches.
+    Watch in session 09 (Mines): a game stays open across clicks, so
+    rotating mid-game would reveal the secret and the mine positions.
+    Refuse rotation while a Mines game is open. Also: the verifier shows
+    raw numbers only; each game session adds its own result line.
+    The desktop app's browser pane can be hidden; if Asher can't find it,
+    use http://localhost:3000 in a normal browser instead.
 
     2026-09-27 — Homepage, done between sessions 04 and 05 at Asher's
     request. Top bar: Sign in / Create account when signed out; username

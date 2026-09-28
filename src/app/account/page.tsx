@@ -1,13 +1,15 @@
 import { randomUUID } from "node:crypto";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
 import { formatCoins } from "../../components/ui/format";
+import { getRevealedSeeds, getSeedStatus } from "../../lib/seeds";
 import { currentUserId } from "../../lib/supabase/server";
 import { getAccount, getBalance, getFaucetStatus, unitsToCoins } from "../../lib/wallet";
 import { signOut } from "../(auth)/actions";
-import { FaucetButton, PrivacyForm } from "./forms";
+import { FaucetButton, PrivacyForm, SeedForm } from "./forms";
 
 export const metadata: Metadata = { title: "Your account — Degenerate Gambling Corner" };
 
@@ -23,10 +25,12 @@ export default async function AccountPage() {
   const id = await currentUserId();
   if (!id) redirect("/login");
 
-  const [account, balance, faucet] = await Promise.all([
+  const [account, balance, faucet, seeds, revealed] = await Promise.all([
     getAccount(id),
     getBalance(id),
     getFaucetStatus(id),
+    getSeedStatus(id),
+    getRevealedSeeds(id),
   ]);
   if (!account) redirect("/login");
 
@@ -63,6 +67,55 @@ export default async function AccountPage() {
           />
         </Card>
       </div>
+
+      <Card
+        title="Fairness"
+        description="Every result comes from our sealed secret, your client word and a spin number. Check any of it at /fairness."
+      >
+        <dl className="grid gap-3 text-sm">
+          <div className="flex flex-col gap-1">
+            <dt className="text-fg-muted">Live secret’s fingerprint</dt>
+            <dd className="font-mono break-all text-fg">{seeds.fingerprint}</dd>
+          </div>
+          <div className="flex flex-wrap gap-x-8 gap-y-3">
+            <div className="flex flex-col gap-1">
+              <dt className="text-fg-muted">Your client word</dt>
+              <dd className="font-mono break-all text-fg">{seeds.clientWord}</dd>
+            </div>
+            <div className="flex flex-col gap-1">
+              <dt className="text-fg-muted">Spins played with it</dt>
+              <dd className="font-mono tabular-nums text-fg">{seeds.nextSpin}</dd>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <dt className="text-fg-muted">Next secret’s fingerprint, sealed before you pick a new word</dt>
+            <dd className="font-mono break-all text-fg">{seeds.nextFingerprint}</dd>
+          </div>
+        </dl>
+        <SeedForm />
+        {revealed.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <h4 className="text-sm font-semibold text-fg">Revealed secrets</h4>
+            <ul className="flex flex-col gap-3">
+              {revealed.slice(0, 10).map((r) => (
+                <li key={r.fingerprint} className="flex flex-col gap-1 rounded-md border border-border p-3 text-sm">
+                  <span className="font-mono break-all text-fg">{r.serverSeed}</span>
+                  <span className="text-fg-muted">
+                    Word <span className="font-mono text-fg">{r.clientWord}</span> · {r.spins} {r.spins === 1 ? "spin" : "spins"}
+                    {" · "}
+                    <Link
+                      className="text-accent-text underline"
+                      href={{ pathname: "/fairness", query: { seed: r.serverSeed, word: r.clientWord, spin: "0", hash: r.fingerprint } }}
+                    >
+                      Check it
+                    </Link>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </Card>
 
       <Card title="Incognito" description="Three separate switches. Each one does exactly what it says.">
         <PrivacyForm

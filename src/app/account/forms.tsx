@@ -2,8 +2,8 @@
 
 import { useActionState } from "react";
 import { Button } from "../../components/ui/button";
-import { Switch } from "../../components/ui/input";
-import { claimFaucetAction, savePrivacyAction, type ActionState } from "./actions";
+import { Field, Input, Switch } from "../../components/ui/input";
+import { claimFaucetAction, rotateSeedAction, savePrivacyAction, type ActionState } from "./actions";
 
 function Feedback({ state }: { state: ActionState }) {
   if (state.error) return <p role="alert" className="text-sm text-loss">{state.error}</p>;
@@ -32,6 +32,23 @@ export function FaucetButton({
         {waitText ?? label}
       </Button>
       <Feedback state={state} />
+    </form>
+  );
+}
+
+export function SeedForm() {
+  const [state, action, pending] = useActionState<ActionState, FormData>(rotateSeedAction, {});
+  return (
+    <form action={action} className="flex flex-col gap-3">
+      <Field id="client_word" label="New client word" hint="Up to 64 characters. Leave it empty and we pick a random one.">
+        <Input id="client_word" name="client_word" maxLength={64} spellCheck={false} autoComplete="off" />
+      </Field>
+      <div className="flex flex-wrap items-center gap-4">
+        <Button type="submit" variant="secondary" disabled={pending}>
+          Reveal this secret and use the next one
+        </Button>
+        <Feedback state={state} />
+      </div>
     </form>
   );
 }

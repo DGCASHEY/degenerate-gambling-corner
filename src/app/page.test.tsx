@@ -31,6 +31,11 @@ describe("homepage", () => {
     expect(html.split("Not built yet").length - 1).toBe(unbuilt);
   });
 
+  it("links the Fairness card to the verifier", () => {
+    const html = renderToStaticMarkup(<HomeView player={null} />);
+    expect(html).toContain('href="/fairness"');
+  });
+
   it("says 18+ and that nothing is worth money", () => {
     const html = renderToStaticMarkup(<HomeView player={null} />);
     expect(html).toContain("18+");
