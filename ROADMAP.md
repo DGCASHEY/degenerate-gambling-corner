@@ -130,7 +130,8 @@ watch next time.
     exactly like Button. Checked at phone width: no sideways scroll,
     site name shortens to "DGC". Watch: only one `next dev` can run per
     folder, so a second chat can't start its own preview; view the
-    existing one on :3000 instead.
+    existing one on :3000 instead. Follow-up the same day: badges no
+    longer wrap (badge.tsx: whitespace-nowrap), pushed and live.
 
     2026-09-27/28 — Session 04 done and live on dgcbet.net. Asher chose to do
     sign-in in the same session (flagged as two concerns, overridden).
