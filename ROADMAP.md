@@ -5,13 +5,16 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: 07 — Limbo, Wheel, Keno at /limbo /wheel /keno, each
-                  following play_dice's pattern, each with a passing
-                  million-round check. Migrations on Supabase (pasted);
-                  Asher played all three. Pushed to dgcbet.net.
-    NEXT UP:      Build session 08 — capture the pattern as /newgame,
-                  then prove it with `/newgame Hilo`.
-    BLOCKED ON:   nothing
+    LAST SESSION: 08, first half — the pattern saved as /newgame
+                  (.claude/commands/newgame.md). Not yet run.
+    FIRST:        Asher asked: before starting anything, remind him to
+                  go through Loose ends together and fix whatever needs
+                  fixing first (e.g. CI running cheat tests twice, admin
+                  pushes skipping checks, the migration history).
+    NEXT UP:      Asher decides what to prove /newgame on. Hilo stays
+                  open between clicks, so /newgame will stop at its
+                  stays-open check (see session note).
+    BLOCKED ON:   Asher's call on Hilo
 
 ---
 
@@ -56,7 +59,7 @@ One session per sitting. Fresh conversation each time. Commit at the end.
 - [x] 06 Shared bet panel (manual and auto) and Dice
       MUST: one million simulated rounds match the predicted win rate
 - [x] 07 Limbo, Wheel, Keno
-- [ ] 08 Capture the pattern as /newgame, then prove it with `/newgame Hilo`
+- [~] 08 Capture the pattern as /newgame, then prove it with `/newgame Hilo`
 - [ ] 09 Mines — server-held board, double-cash-out test written first
 - [ ] 10 Plinko — server decides the slot, the animation follows it
 - [ ] 11 Crash — referee programme, shared clock, cash-out ordering
@@ -136,6 +139,22 @@ Also in CLAUDE.md. Repeated here because they matter most.
 
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time. Dates are Asher's local time (US Eastern).
+
+    2026-09-27 — Session 08, first half: read Dice, Limbo, Wheel, Keno
+    and saved their shared recipe as .claude/commands/newgame.md (run as
+    /newgame <Name>). Asher checked the pattern before it was written.
+    Steps: read + stays-open check; Asher's choices and exact RTP, wait;
+    both cheat test files (same seven groups as Limbo + million rounds
+    + 10,000 auto bets) shown failing, wait; migration / lib / wallet /
+    action / BetPanel page / verifier / games.ts, copying Limbo; all
+    checks, then an RTP table (theory vs actual, pass mark 4.5 standard
+    errors); Asher pastes the migration, plays, roadmap, commit. Stops
+    to ask on anything with no pattern here or any new dependency.
+    Added at Asher's request: the stays-open check. A game that keeps a
+    round open between clicks (cash out, several decisions per bet,
+    shared rounds) stops the command before any plan. Hilo does, like
+    Mines: open-round state, no secret reveal mid-round, cash out once.
+    No code changed; no tests run (nothing to test).
 
     2026-09-27 — Session 07 done: Limbo, Wheel and Keno, all three in one
     session at Asher's request. Each copies Dice exactly: a migration
