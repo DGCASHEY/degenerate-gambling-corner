@@ -28,7 +28,7 @@ Marks: `[ ]` not started · `[~]` in progress · `[x]` done
 
 - [x] 01 Claude account and plan
 - [x] 02 GitHub account and empty private repository
-- [x] 03 Buy ashey.bet (and degencorner.com as the backup)
+- [x] 03 Buy the domain (live site is dgcbet.net)
 - [x] 04 Supabase account and empty project
 - [x] 05 Vercel account, linked to GitHub
 - [x] 06 Upstash, Resend, Sentry, PostHog accounts
@@ -63,7 +63,9 @@ One session per sitting. Fresh conversation each time. Commit at the end.
 
 - [ ] Live bet feed, player counters, public profiles
 - [ ] Chat: filter, speed limit, kill switch
-- [ ] Incognito settings page (three switches)
+- [~] Incognito settings page (three switches) — switches stored and
+      editable on /account since session 04; nothing reads them yet
+      (feed and leaderboard don't exist)
 - [ ] Experience points, ranks, badges, daily bonus, leaderboard
 - [ ] Slot engine: reels, paylines, payout tuning, free spins
 - [ ] Slot artwork: three themes
@@ -73,6 +75,24 @@ One session per sitting. Fresh conversation each time. Commit at the end.
 - [ ] Sentry and PostHog switched on
 - [ ] Load rehearsal: a thousand simulated players at once
 - [ ] Terms, privacy notice, responsible-play page, 18+ gate
+      (sign-up already requires an 18+ tick-box, enforced by the database)
+
+## Loose ends
+
+Small jobs that don't belong to a session. Pick off when there's a gap.
+
+- [ ] Supabase email through Resend (custom SMTP) before real players
+      arrive. Built-in email works but only sends about 2 an hour.
+      Asher enters the Resend key in Supabase (Claude can't handle keys).
+- [ ] Homepage has no sign-in or sign-up link yet. Players must type
+      /signup or /login.
+- [ ] GitHub lets admins push to main without the checks passing (seen
+      on the session 03 push). Tick "include administrators" in branch
+      protection, or switch to pull requests per session.
+- [ ] Re-authorise the Claude connection to Vercel for this team, so
+      Claude can read runtime logs and settings (currently 403).
+- [ ] Review the broad "Claude" OAuth connection in PostHog (147+ write
+      scopes, noted 2026-09-13).
 
 ---
 
@@ -95,7 +115,7 @@ Also in CLAUDE.md. Repeated here because they matter most.
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time.
 
-    2026-09-27 — Session 04 built, not yet shipped. Asher chose to do
+    2026-09-27/28 — Session 04 done and live on dgcbet.net. Asher chose to do
     sign-in in the same session (flagged as two concerns, overridden).
     Decisions: new accounts get 5,000 (a one-time "welcome" faucet entry);
     two separate taps, hourly 200 and daily 1,000, claimable at any
@@ -136,10 +156,8 @@ watch next time.
     Logs (project top menu > Logs) first. The Claude connection to Vercel
     can't see this team, so Asher reads them.
     Watch: embedded-postgres's install script is skipped by npm, but CI
-    passes on Linux anyway, so it isn't needed. Supabase's
-    built-in email does work, but only sends about 2 an hour, so real
-    players will need it sent through Resend (custom SMTP) before launch. The Claude connection to Vercel can't see this team's
-    settings; needs re-authorising if we want Claude to check them.
+    passes on Linux anyway, so it isn't needed. Open follow-ups are in
+    "Loose ends" above.
 
     2026-09-27 — Session 03 done. All colours are tokens in
     src/app/globals.css (navy bg, one electric-blue accent, win/loss/warn
