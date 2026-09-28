@@ -9,7 +9,7 @@ export type Game = {
 };
 
 export const games: Game[] = [
-  { name: "Dice", kind: "original", blurb: "Pick a number. Roll over or under it. The odds are the number." },
+  { name: "Dice", kind: "original", blurb: "Pick a number. Roll over or under it. The odds are the number.", href: "/dice" },
   { name: "Limbo", kind: "original", blurb: "Name a multiplier. Hope the result clears it." },
   { name: "Wheel", kind: "original", blurb: "A wheel. It spins. Most of it pays less than you bet." },
   { name: "Keno", kind: "original", blurb: "Pick up to ten numbers. Watch most of them miss." },

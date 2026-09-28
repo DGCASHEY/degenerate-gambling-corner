@@ -107,7 +107,11 @@ type SegmentedControlProps = {
   name: string;
   label: string;
   options: SegmentedOption[];
-  defaultValue: string;
+  defaultValue?: string;
+  // Pass value and onChange to control it from the page instead.
+  value?: string;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
 };
 
 // Pick exactly one of a few options. Used for the Manual / Auto tabs.
@@ -116,9 +120,15 @@ export function SegmentedControl({
   label,
   options,
   defaultValue,
+  value,
+  onChange,
+  disabled,
 }: SegmentedControlProps) {
   return (
-    <fieldset className="flex rounded-md border border-border bg-inset p-1">
+    <fieldset
+      disabled={disabled}
+      className="flex rounded-md border border-border bg-inset p-1 disabled:opacity-40"
+    >
       <legend className="sr-only">{label}</legend>
       {options.map((option) => (
         <label
@@ -130,7 +140,9 @@ export function SegmentedControl({
             name={name}
             value={option.value}
             data-mode={option.value}
-            defaultChecked={option.value === defaultValue}
+            {...(value === undefined
+              ? { defaultChecked: option.value === defaultValue }
+              : { checked: option.value === value, onChange: () => onChange?.(option.value) })}
             className="sr-only"
           />
           {option.label}

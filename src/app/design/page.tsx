@@ -261,7 +261,7 @@ export default function DesignSystem() {
           <FeedList bets={feed} />
         </Section>
 
-        <Section title="Bet panel shell" note="The frame every Original sits in. Layout only: these buttons are not connected to anything.">
+        <Section title="Bet panel shell" note="The frame every Original sits in. Here it has no game behind it, so the buttons stay switched off. See it working on /dice.">
           <BetPanel
             id="demo-panel"
             controls={

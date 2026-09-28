@@ -54,6 +54,11 @@ export default async function FairnessPage({ searchParams }: { searchParams: Sea
           </li>
           <li>Games that need more than 8 numbers take the next block: round 1, then 2, and so on.</li>
           <li>Each game turns these numbers into its result. Those rules appear here as the games do.</li>
+          <li>
+            <span className="text-fg">Dice</span>: roll = the first number × 10,000, rounded down, read as
+            hundredths (0.00 to 99.99). Under T wins below T, over T wins above T. A win pays the bet × 99 ÷
+            win chance, rounded down to 0.01.
+          </li>
         </ol>
       </Card>
 

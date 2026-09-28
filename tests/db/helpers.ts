@@ -178,3 +178,49 @@ export async function sqlNumbers(
   ]);
   return rows[0].numbers;
 }
+
+// ---------------------------------------------------------------------------
+// Dice
+// ---------------------------------------------------------------------------
+
+export type DiceDirection = "under" | "over";
+
+export type DiceResult = {
+  roundId: number;
+  seedPairId: number;
+  spin: number;
+  roll: number;
+  won: boolean;
+  payout: number;
+  balance: number;
+  replayed: boolean;
+};
+
+// target and roll are whole hundredths: 5000 means 50.00.
+export async function playDice(
+  db: pg.Client,
+  account: string,
+  amount: number,
+  target: number,
+  direction: string,
+  key: string,
+): Promise<DiceResult> {
+  const { rows } = await db.query("select * from public.play_dice($1, $2, $3, $4, $5)", [
+    account,
+    amount,
+    target,
+    direction,
+    key,
+  ]);
+  const r = rows[0];
+  return {
+    roundId: Number(r.round_id),
+    seedPairId: Number(r.seed_pair_id),
+    spin: Number(r.spin),
+    roll: Number(r.roll),
+    won: r.won,
+    payout: Number(r.payout),
+    balance: Number(r.balance),
+    replayed: r.replayed,
+  };
+}

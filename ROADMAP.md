@@ -5,13 +5,11 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: 05 — provably fair seeds (sealed secret, client word,
-                  spin counter), public verifier at /fairness, Fairness
-                  card on /account. Migration applied to Supabase.
-    NEXT UP:      Build session 06 — shared bet panel and Dice. Dice
-                  gets its outcome from public.take_spin inside the same
-                  transaction as the bet, and adds a "Dice roll" line to
-                  the verifier.
+    LAST SESSION: 06 — working bet panel (Manual/Auto, keys), Dice at
+                  /dice, Dice line on the verifier. Million-round check
+                  passes. Migrations on Supabase; Asher played 66 rounds.
+    NEXT UP:      Build session 07 — Limbo, Wheel, Keno, each on the
+                  shared BetPanel, following play_dice's pattern.
     BLOCKED ON:   nothing
 
 ---
@@ -54,7 +52,7 @@ One session per sitting. Fresh conversation each time. Commit at the end.
       MUST: four cheating tests written and shown failing before any fix
       (duplicate bet, oversized bet, simultaneous requests, negative balance)
 - [x] 05 Fairness engine and the public verifier page
-- [ ] 06 Shared bet panel (manual and auto) and Dice
+- [x] 06 Shared bet panel (manual and auto) and Dice
       MUST: one million simulated rounds match the predicted win rate
 - [ ] 07 Limbo, Wheel, Keno
 - [ ] 08 Capture the pattern as /newgame, then prove it with `/newgame Hilo`
@@ -101,6 +99,15 @@ Small jobs that don't belong to a session. Pick off when there's a gap.
 - [ ] Supabase security check says "Leaked password protection" is off
       (Authentication settings). Switching it on refuses passwords known
       from data leaks. Asher's call; noted 2026-09-28.
+- [ ] Every balance check re-adds the player's whole ledger (get_balance,
+      and the never-negative trigger, so twice per bet). Fine today, but
+      10,000 bets in a row already take ~13 ms each by the end, and a
+      heavy player will slow down over months. Needs its own session and
+      its own failing tests; don't fix it in passing. Noted 2026-09-28.
+- [ ] CI runs every cheat test twice (npm test includes tests/cheat, then
+      npm run cheat runs them again). The dice odds test takes ~3.5 min,
+      so each push spends ~7 min on it. Consider excluding tests/cheat
+      from npm test. Noted 2026-09-28.
 
 ---
 
@@ -123,6 +130,46 @@ Also in CLAUDE.md. Repeated here because they matter most.
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time.
 
+    2026-09-28 — Session 06 done. Finish: auto mode blocked Claude
+    from applying the migrations (it counts as a production deploy), so
+    Asher pasted both files into Supabase's SQL Editor. They are NOT in
+    Supabase's migration history list; the files here are the record.
+    Checked read-only: all present, browser locked out, security check
+    nothing new. Asher played 66 rounds (Manual and Auto) on localhost
+    signed in; database check: 66 distinct spins, every bet and payout
+    line matches its round and the rules, no negative balances.
+    Next time a migration needs applying, expect the same block: either
+    Asher switches the session out of Auto mode first, or pastes it.
+    Build notes:
+    Asher's choices: 1% house edge (a win pays bet × 99 ÷ win chance),
+    payouts rounded down to 0.01, win chance 0.01%–98%, Auto "on win"
+    and "on loss" each Reset or Multiply ×N, keys Space bet / A half /
+    S double / D flip. Changed from the plan with a reason: rolls are
+    0.00–99.99 (10,000 rolls), not 0.00–100.00, so every chance is
+    exact (under 50.00 = exactly 50%).
+    Database: 20260928120000_ledger_payout.sql adds a "payout" ledger
+    kind (own file: Postgres won't use a new kind in the same
+    transaction). 20260928120100_dice.sql: payouts must be positive;
+    dice_rounds (append-only, one row per round, a spin can't be used
+    twice); dice_roll / dice_winning_rolls / dice_payout; play_dice
+    does place_bet + take_spin + roll + payout + remember, all in one
+    transaction; a repeated key returns the first round. Nothing new
+    for the ledger or fairness, only added to. Same maths in
+    src/lib/dice.ts (display and verifier only), tested to agree.
+    Website: bet-panel.tsx is now a working client component (was
+    layout only); src/lib/auto-bet.ts holds the Auto rules; playDice in
+    wallet.ts; /dice page; Dice card on the homepage now links; Dice
+    roll line on /fairness. SegmentedControl can now be controlled.
+    Tests first: 44 new, shown failing (one passed at first because
+    everything was refused; it now demands its exact error). Proof:
+    1,000,000 rounds through the database recipe with a random secret,
+    win rate within 2 standard errors of prediction at every target
+    from 98% down to 0.01% (both runs whose numbers were printed; the
+    test's pass mark is 4.5), rolls evenly spread; 10,000
+    real auto bets through play_dice, every coin accounted for.
+    164 tests, 96 cheat, lint, build pass. Checked in the browser:
+    signed-out /dice, verifier's Dice line (62.32 for a known secret),
+    panel at phone width. Not yet seen: a signed-in game.
     2026-09-28 — Small fix before session 06, at Asher's request: a
     "Home" button on /account (top row, next to Sign out), using the
     existing ButtonLink. Lint and 115 tests pass. Not yet seen on screen

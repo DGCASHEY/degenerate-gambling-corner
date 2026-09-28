@@ -94,3 +94,61 @@ export async function setPrivacy(
   });
   if (error) throw new Error(error.message);
 }
+
+export type DiceRound = {
+  roundId: number;
+  seedPairId: number;
+  // Check it at /fairness once this secret is revealed.
+  spin: number;
+  // Whole hundredths, 0 (0.00) to 9999 (99.99).
+  roll: number;
+  won: boolean;
+  payout: number;
+  balance: number;
+  replayed: boolean;
+};
+
+// One Dice round: the database takes the bet, rolls with the next spin,
+// pays any win and remembers the round, all in one transaction. A repeated
+// idempotency key hands back the first round. Returns the database's error
+// code (e.g. "insufficient_balance") instead of throwing.
+export async function playDice(
+  id: string,
+  amount: number,
+  target: number,
+  direction: "under" | "over",
+  idempotencyKey: string,
+): Promise<{ ok: true; round: DiceRound } | { ok: false; code: string }> {
+  const { data, error } = await serverClient()
+    .rpc("play_dice", {
+      p_account: id,
+      p_amount: amount,
+      p_target: target,
+      p_direction: direction,
+      p_key: idempotencyKey,
+    })
+    .single<{
+      round_id: number;
+      seed_pair_id: number;
+      spin: number;
+      roll: number;
+      won: boolean;
+      payout: number;
+      balance: number;
+      replayed: boolean;
+    }>();
+  if (error) return { ok: false, code: error.message };
+  return {
+    ok: true,
+    round: {
+      roundId: Number(data.round_id),
+      seedPairId: Number(data.seed_pair_id),
+      spin: Number(data.spin),
+      roll: Number(data.roll),
+      won: data.won,
+      payout: Number(data.payout),
+      balance: Number(data.balance),
+      replayed: data.replayed,
+    },
+  };
+}

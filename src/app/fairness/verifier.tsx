@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card } from "../../components/ui/card";
 import { Field, Input } from "../../components/ui/input";
 import { Table, Td, Th } from "../../components/ui/table";
+import { diceRoll } from "../../lib/dice";
 import { fairNumbers, fingerprint, MAX_NUMBERS_PER_SPIN } from "../../lib/fairness";
 
 // Works out everything in the visitor's own browser. Nothing typed here is
@@ -126,6 +127,16 @@ export function Verifier({ initialSecret, initialWord, initialSpin, initialFinge
           <p className="text-sm text-fg-subtle">Fill in the secret, word and spin number to see them.</p>
         )}
       </section>
+
+      <Card title="Dice roll" description="The first number × 10,000, rounded down, read as hundredths: 0.00 to 99.99.">
+        {result?.numbers ? (
+          <p className="font-mono text-2xl font-bold tabular-nums text-fg" data-testid="dice-roll">
+            {(diceRoll(result.numbers[0]) / 100).toFixed(2)}
+          </p>
+        ) : (
+          <p className="text-sm text-fg-subtle">Fill in the secret, word and spin number to see it.</p>
+        )}
+      </Card>
     </div>
   );
 }
