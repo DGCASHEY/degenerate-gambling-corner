@@ -5,13 +5,11 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: Session 04 built — wallet, ledger, faucet, sign-up/in,
-                  account page. 36 cheat tests pass. NOT PUSHED yet.
-    NEXT UP:      Finish 04: Vercel env vars + Supabase auth URLs set,
-                  then push. (Local sign-up already proven end to end.)
-                  Then session 05 — fairness engine and verifier page.
-    BLOCKED ON:   Asher: Vercel environment variables, Supabase auth
-                  redirect URLs (see 2026-09-27 session 04 note)
+    LAST SESSION: Session 04 done and live — wallet, ledger, faucet,
+                  sign-up/in, account page. Proven on dgcbet.net.
+    NEXT UP:      Build session 05 — fairness engine and the public
+                  verifier page.
+    BLOCKED ON:   nothing
 
 ---
 
@@ -49,7 +47,7 @@ One session per sitting. Fresh conversation each time. Commit at the end.
 
 - [x] 02 VOICE.md written, CLAUDE.md refreshed against the real project
 - [x] 03 Design system: colour tokens, type scale, light and dark, component gallery
-- [~] 04 Accounts, wallet, append-only ledger
+- [x] 04 Accounts, wallet, append-only ledger
       MUST: four cheating tests written and shown failing before any fix
       (duplicate bet, oversized bet, simultaneous requests, negative balance)
 - [ ] 05 Fairness engine and the public verifier page
@@ -127,16 +125,18 @@ watch next time.
     Supabase settings not reaching the Vercel build (src/proxy.ts threw on
     every request). Fixed so a missing setting only breaks sign-in:
     the proxy now skips the login refresh and logs an error instead
-    (src/proxy.test.ts). Asher checking the Vercel variables + redeploy.
-    STILL TO DO before pushing, all Asher's hands:
-      1. (done — see above)
-      2. Vercel: add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,
-         SUPABASE_SERVICE_ROLE_KEY. Without them the live site breaks on
-         every page, because src/proxy.ts runs on every request.
-      3. Supabase > Authentication > URL Configuration: add
-         https://dgcbet.net/** and http://localhost:3000/** as redirect URLs.
-    Watch: CI on Linux may need npm to allow embedded-postgres's install
-    script (it was blocked locally, harmless on Windows). Supabase's
+    (src/proxy.test.ts). Then fixed the Vercel variables one at a time,
+    using Vercel's runtime Logs to see which was missing: first the URL,
+    then the anon key (Supabase's newer screens call it "publishable"),
+    then the service role key ("secret"). Each fix needed a redeploy.
+    Finished 2026-09-28 00:04 UTC: Asher signed in on dgcbet.net and the
+    account page's database requests were all accepted. Supabase redirect
+    URLs for dgcbet.net and localhost are set.
+    Lesson for next time: when a live page 500s, read Vercel's runtime
+    Logs (project top menu > Logs) first. The Claude connection to Vercel
+    can't see this team, so Asher reads them.
+    Watch: embedded-postgres's install script is skipped by npm, but CI
+    passes on Linux anyway, so it isn't needed. Supabase's
     built-in email does work, but only sends about 2 an hour, so real
     players will need it sent through Resend (custom SMTP) before launch. The Claude connection to Vercel can't see this team's
     settings; needs re-authorising if we want Claude to check them.
