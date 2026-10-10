@@ -7,10 +7,13 @@ session. It is the memory between conversations.
 
     LAST SESSION: 08, first half — the pattern saved as /newgame
                   (.claude/commands/newgame.md). Not yet run.
+    IN REVIEW:    The npm test change is on branch ci-cheat-tests-once
+                  as a pull request. Asher merges it once CI is green.
+                  From now on: every session on a branch + pull request.
     FIRST:        Asher asked: before starting anything, remind him to
                   go through Loose ends together and fix whatever needs
-                  fixing first (e.g. CI running cheat tests twice, admin
-                  pushes skipping checks, the migration history).
+                  fixing first (e.g. admin pushes skipping checks, the
+                  migration history).
     NEXT UP:      Asher decides what to prove /newgame on. Hilo stays
                   open between clicks, so /newgame will stop at its
                   stays-open check (see session note).
@@ -108,12 +111,9 @@ Small jobs that don't belong to a session. Pick off when there's a gap.
       10,000 bets in a row already take ~13 ms each by the end, and a
       heavy player will slow down over months. Needs its own session and
       its own failing tests; don't fix it in passing. Noted 2026-09-27.
-- [ ] CI runs every cheat test twice (npm test includes tests/cheat, then
-      npm run cheat runs them again). Since session 07 there are four
-      million-round tests (dice ~3.5 min, limbo ~3, wheel ~2.5, keno ~5
-      on Asher's PC), so each push spends ~25-30 min on them. Consider
-      excluding tests/cheat from npm test. More urgent now. Noted
-      2026-09-27, updated after session 07.
+- [x] CI runs every cheat test twice (npm test includes tests/cheat, then
+      npm run cheat runs them again). Fixed 2026-09-27: npm test now
+      excludes tests/cheat (84 tests); npm run cheat runs them once.
 - [ ] Migrations since session 06 were pasted into Supabase's SQL
       Editor, so Supabase's migration history list doesn't show them.
       The files in supabase/migrations are the record. Fine for now;
@@ -140,6 +140,16 @@ Also in CLAUDE.md. Repeated here because they matter most.
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time. Dates are Asher's local time (US Eastern).
 
+    2026-10-10 — Saved the npm test change from last time. npm run
+    cheat: 193 passed (~5 min). npm test: 84 passed, cheat folder
+    skipped. Committed on branch ci-cheat-tests-once and opened as a
+    pull request instead of pushing to main (first one done this way).
+    Still open: Asher removes "Repository admin" from the GitHub
+    ruleset's bypass list. Asher asked about real gambling affiliate
+    links for profit; declined (breaks the no-real-money rule, and
+    the players include teenagers). If money comes up again: ads with
+    gambling categories blocked, account owned by a parent.
+
     2026-09-27 — Session 08, first half: read Dice, Limbo, Wheel, Keno
     and saved their shared recipe as .claude/commands/newgame.md (run as
     /newgame <Name>). Asher checked the pattern before it was written.
@@ -155,6 +165,10 @@ watch next time. Dates are Asher's local time (US Eastern).
     shared rounds) stops the command before any plan. Hilo does, like
     Mines: open-round state, no secret reveal mid-round, cash out once.
     No code changed; no tests run (nothing to test).
+    Then, loose ends first (Asher's rule now): npm test no longer runs
+    tests/cheat, so CI runs each cheat test once, not twice. Next loose
+    end: take "Repository admin" off the GitHub ruleset's bypass list
+    (Asher clicks it), then work each session on a branch + pull request.
 
     2026-09-27 — Session 07 done: Limbo, Wheel and Keno, all three in one
     session at Asher's request. Each copies Dice exactly: a migration
