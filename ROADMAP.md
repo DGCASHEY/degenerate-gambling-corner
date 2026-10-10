@@ -12,8 +12,7 @@ session. It is the memory between conversations.
                   From now on: every session on a branch + pull request.
     FIRST:        Asher asked: before starting anything, remind him to
                   go through Loose ends together and fix whatever needs
-                  fixing first (e.g. admin pushes skipping checks, the
-                  migration history).
+                  fixing first (e.g. the migration history).
     NEXT UP:      Asher decides what to prove /newgame on. Hilo stays
                   open between clicks, so /newgame will stop at its
                   stays-open check (see session note).
@@ -96,9 +95,11 @@ Small jobs that don't belong to a session. Pick off when there's a gap.
       /signup or /login. (Fixed by the homepage, 2026-09-27.)
 - [ ] Sign in on dgcbet.net and check the homepage top bar shows your
       username and balance. Covered by a test, not yet seen on screen.
-- [ ] GitHub lets admins push to main without the checks passing (seen
-      on the session 03 push, and again on the homepage push). Tick "include administrators" in branch
-      protection, or switch to pull requests per session.
+- [x] GitHub lets admins push to main without the checks passing (seen
+      on the session 03 push, and again on the homepage push). Fixed
+      2026-10-10: Asher turned on "include administrators" in main's
+      branch protection (classic settings, not a ruleset); "test" is a
+      required check. Sessions now go through a branch + pull request.
 - [ ] Re-authorise the Claude connection to Vercel for this team, so
       Claude can read runtime logs and settings (currently 403).
 - [ ] Review the broad "Claude" OAuth connection in PostHog (147+ write
@@ -144,8 +145,9 @@ watch next time. Dates are Asher's local time (US Eastern).
     cheat: 193 passed (~5 min). npm test: 84 passed, cheat folder
     skipped. Committed on branch ci-cheat-tests-once and opened as a
     pull request instead of pushing to main (first one done this way).
-    Still open: Asher removes "Repository admin" from the GitHub
-    ruleset's bypass list. Asher asked about real gambling affiliate
+    Asher then turned on "include administrators" in main's branch
+    protection; checked via the GitHub API (enforce_admins true, no
+    rulesets exist). Asher asked about real gambling affiliate
     links for profit; declined (breaks the no-real-money rule, and
     the players include teenagers). If money comes up again: ads with
     gambling categories blocked, account owned by a parent.
