@@ -5,18 +5,21 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: 08, first half — the pattern saved as /newgame
-                  (.claude/commands/newgame.md). Not yet run.
-    IN REVIEW:    The npm test change is on branch ci-cheat-tests-once
-                  as a pull request. Asher merges it once CI is green.
-                  From now on: every session on a branch + pull request.
-    FIRST:        Asher asked: before starting anything, remind him to
-                  go through Loose ends together and fix whatever needs
-                  fixing first (e.g. the migration history).
-    NEXT UP:      Asher decides what to prove /newgame on. Hilo stays
-                  open between clicks, so /newgame will stop at its
-                  stays-open check (see session note).
-    BLOCKED ON:   Asher's call on Hilo
+    LAST SESSION: 2026-10-10, loose ends — CI runs each cheat test
+                  once; admins can't skip checks on main. Merged as
+                  pull request #1 (the first one).
+    HOW WE SAVE:  main is protected. Every session works on its own
+                  branch, pushes it, opens a pull request; Asher merges
+                  once all checks are green. Then switch back to main
+                  and pull.
+    NEXT UP:      Asher picks one (one per session):
+                  a) Migration history: squaring up Supabase's list
+                     with the files pasted in by hand since session
+                     06 (last loose end Asher wanted done first).
+                  b) /newgame decision: keep Hilo and handle the open
+                     round (same problem as Mines), or prove /newgame
+                     on a game that settles in one click.
+    BLOCKED ON:   Asher's choice of a) or b)
 
 ---
 
@@ -151,6 +154,10 @@ watch next time. Dates are Asher's local time (US Eastern).
     links for profit; declined (breaks the no-real-money rule, and
     the players include teenagers). If money comes up again: ads with
     gambling categories blocked, account owned by a parent.
+    CI on the pull request: all 3 checks green, Asher merged it
+    (2026-10-10, pull request #1); local copy switched back to main and
+    pulled. Watch: a new push to a pull request's branch restarts its
+    checks, and the merge button stays locked until they finish.
 
     2026-09-27 — Session 08, first half: read Dice, Limbo, Wheel, Keno
     and saved their shared recipe as .claude/commands/newgame.md (run as
