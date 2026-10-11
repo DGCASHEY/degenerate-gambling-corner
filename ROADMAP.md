@@ -5,16 +5,20 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: 2026-10-10, loose end — Supabase's migration
-                  history now lists all 7 files, numbers matching.
+    LAST SESSION: 2026-10-10, Hilo part 1 of 3 — plan agreed, 64
+                  tests written and shown failing, saved on branch
+                  hilo (pushed, NO pull request yet: its checks would
+                  be red on purpose until part 2).
     HOW WE SAVE:  main is protected. Every session works on its own
                   branch, pushes it, opens a pull request; Asher merges
                   (Merge pull request, then Confirm merge) once all
                   checks are green. Then switch back to main and pull.
-    NEXT UP:      /newgame decision: keep Hilo and handle the open
-                  round (same problem as Mines), or prove /newgame on
-                  a game that settles in one click.
-    BLOCKED ON:   Asher's choice
+                  Exception: Hilo stays on branch hilo across parts
+                  1-3; the pull request opens when everything passes.
+    NEXT UP:      Hilo part 2 — on branch hilo: the migration and
+                  src/lib/hilo.ts until all 64 hilo tests pass, then
+                  the RTP table. Plan and choices: session note below.
+    BLOCKED ON:   nothing
 
 ---
 
@@ -60,6 +64,10 @@ One session per sitting. Fresh conversation each time. Commit at the end.
       MUST: one million simulated rounds match the predicted win rate
 - [x] 07 Limbo, Wheel, Keno
 - [~] 08 Capture the pattern as /newgame, then prove it with `/newgame Hilo`
+      Hilo stays open between clicks, so /newgame stopped (as designed).
+      Hilo is now the first open-round game, built by hand in 3 parts:
+      [x] 1 plan + failing tests  [ ] 2 database + maths  [ ] 3 page,
+      verifier, play, merge. Mines (09) then copies its pattern.
 - [ ] 09 Mines — server-held board, double-cash-out test written first
 - [ ] 10 Plinko — server decides the slot, the animation follows it
 - [ ] 11 Crash — referee programme, shared clock, cash-out ordering
@@ -137,6 +145,49 @@ Also in CLAUDE.md. Repeated here because they matter most.
 
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time. Dates are Asher's local time (US Eastern).
+
+    2026-10-10 — Hilo part 1: plan + failing tests. Merged PR #3
+    first. /newgame Hilo stopped at the stays-open check; Asher chose
+    to build the open-round pattern with Hilo (gentler than Mines).
+    Asher's choices (all as suggested): every card dealt fresh from a
+    full deck, card = k x 52 / 2^32 rounded down, rank = card / 4 (Ace
+    0 low .. King 12 high), suit = card mod 4 (looks only). Guesses:
+    "higher" = higher or same, "lower" = lower or same, plus skip; a
+    guess that can't lose (higher on Ace, lower on King) is refused.
+    A right guess multiplies by 2^32 / winCount; cash out pays bet x
+    0.99 x all of them, rounded down (edge taken ONCE, so every
+    strategy returns exactly 99%). Cash out needs 1+ right guess. Max
+    64 cards (no skip on move 63) and 1,000,000x; either ends the
+    round by itself. No Auto. Rounds wait forever; one open round per
+    player; other games still playable meanwhile.
+    Design, agreed: three append-only tables — hilo_rounds (bet +
+    spin + first card), hilo_moves (one per guess/skip, move number
+    + key), hilo_endings (round_id unique: one ending EVER, which is
+    what stops a double cash-out). Cards are computed from the sealed
+    secret only when a move arrives; nothing stores upcoming cards.
+    Every function locks the player. Functions the tests expect:
+    hilo_card, hilo_win_count, hilo_is_right, hilo_payout,
+    hilo_multiplier, start_hilo, guess_hilo(account, round, move,
+    guess, key), cash_out_hilo, open_hilo_round; all four round
+    functions return the same columns (HILO_COLUMNS in helpers.ts).
+    Errors: invalid_amount, insufficient_balance, hilo_round_open,
+    idempotency_key_reused, no_such_round, round_over, stale_move,
+    invalid_guess, invalid_rank, guess_cannot_lose, no_skips_left,
+    no_right_guess.
+    Two OK'd changes outside the recipe: rotate_seed refuses with
+    hilo_round_open while a round is open (fairness engine, changed by
+    a new migration); BetPanel learns to hide Auto and swap its Bet
+    button for Higher/Lower/Skip/Cash out (failing test first, part 3).
+    Tests: tests/cheat/hilo.test.ts (62) and hilo-odds.test.ts (2),
+    all 64 shown failing, each because Hilo doesn't exist yet (grouped
+    every error message to check). Tests peek at upcoming cards by
+    reading the secret as the test superuser. src/lib/hilo.ts is a
+    placeholder that throws. npm test 85 (design-tokens checks the new
+    file), lint and types pass. Full cheat suite not rerun (only
+    helpers were appended). Watch in part 2: the direct second-ending
+    insert test expects "duplicate key", so an insert trigger on
+    hilo_endings must not fire first with a different error. CI time
+    will grow by the million-round test (6 strategies in plpgsql).
 
     2026-10-10 — Loose end: migration history squared up. Supabase's
     list had wallet and fairness under the times they were applied

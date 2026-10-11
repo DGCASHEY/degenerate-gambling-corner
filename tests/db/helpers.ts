@@ -341,3 +341,92 @@ export async function playKeno(
     replayed: r.replayed,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Hilo: a round that stays open between clicks
+// ---------------------------------------------------------------------------
+
+export type HiloState = "open" | "cashed_out" | "lost";
+
+// Everything the server hands back about a round. cards holds only cards
+// already played: the first card, then one per move. Never the next one.
+export type HiloRound = {
+  roundId: number;
+  seedPairId: number;
+  spin: number;
+  amount: number;
+  cards: number[];
+  guesses: string[];
+  state: HiloState;
+  // Whole hundredths, rounded down: 0.99 x every right guess's multiplier.
+  multiplier: number;
+  payout: number;
+  balance: number;
+  replayed: boolean;
+};
+
+// The exact columns every hilo function returns. Nothing else.
+export const HILO_COLUMNS = [
+  "round_id",
+  "seed_pair_id",
+  "spin",
+  "amount",
+  "cards",
+  "guesses",
+  "state",
+  "multiplier",
+  "payout",
+  "balance",
+  "replayed",
+];
+
+function hiloRound(r: Record<string, unknown>): HiloRound {
+  return {
+    roundId: Number(r.round_id),
+    seedPairId: Number(r.seed_pair_id),
+    spin: Number(r.spin),
+    amount: Number(r.amount),
+    cards: r.cards as number[],
+    guesses: r.guesses as string[],
+    state: r.state as HiloState,
+    multiplier: Number(r.multiplier),
+    payout: Number(r.payout),
+    balance: Number(r.balance),
+    replayed: r.replayed as boolean,
+  };
+}
+
+export async function startHilo(db: pg.Client, account: string, amount: number, key: string): Promise<HiloRound> {
+  const { rows } = await db.query("select * from public.start_hilo($1, $2, $3)", [account, amount, key]);
+  return hiloRound(rows[0]);
+}
+
+// move is 1 for the first guess or skip of the round, 2 for the next...
+export async function guessHilo(
+  db: pg.Client,
+  account: string,
+  roundId: number,
+  move: number,
+  guess: string,
+  key: string,
+): Promise<HiloRound> {
+  const { rows } = await db.query("select * from public.guess_hilo($1, $2, $3, $4, $5)", [
+    account,
+    roundId,
+    move,
+    guess,
+    key,
+  ]);
+  return hiloRound(rows[0]);
+}
+
+export async function cashOutHilo(db: pg.Client, account: string, roundId: number, key: string): Promise<HiloRound> {
+  const { rows } = await db.query("select * from public.cash_out_hilo($1, $2, $3)", [account, roundId, key]);
+  return hiloRound(rows[0]);
+}
+
+// The player's open round, for a page reload. null when there isn't one.
+export async function openHiloRound(db: pg.Client, account: string): Promise<HiloRound | null> {
+  const { rows } = await db.query("select * from public.open_hilo_round($1)", [account]);
+  return rows.length === 0 ? null : hiloRound(rows[0]);
+}
