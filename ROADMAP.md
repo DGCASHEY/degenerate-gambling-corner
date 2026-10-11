@@ -5,21 +5,16 @@ session. It is the memory between conversations.
 
 **Status line — update this every time:**
 
-    LAST SESSION: 2026-10-10, loose ends — CI runs each cheat test
-                  once; admins can't skip checks on main. Merged as
-                  pull request #1 (the first one).
+    LAST SESSION: 2026-10-10, loose end — Supabase's migration
+                  history now lists all 7 files, numbers matching.
     HOW WE SAVE:  main is protected. Every session works on its own
                   branch, pushes it, opens a pull request; Asher merges
-                  once all checks are green. Then switch back to main
-                  and pull.
-    NEXT UP:      Asher picks one (one per session):
-                  a) Migration history: squaring up Supabase's list
-                     with the files pasted in by hand since session
-                     06 (last loose end Asher wanted done first).
-                  b) /newgame decision: keep Hilo and handle the open
-                     round (same problem as Mines), or prove /newgame
-                     on a game that settles in one click.
-    BLOCKED ON:   Asher's choice of a) or b)
+                  (Merge pull request, then Confirm merge) once all
+                  checks are green. Then switch back to main and pull.
+    NEXT UP:      /newgame decision: keep Hilo and handle the open
+                  round (same problem as Mines), or prove /newgame on
+                  a game that settles in one click.
+    BLOCKED ON:   Asher's choice
 
 ---
 
@@ -118,10 +113,9 @@ Small jobs that don't belong to a session. Pick off when there's a gap.
 - [x] CI runs every cheat test twice (npm test includes tests/cheat, then
       npm run cheat runs them again). Fixed 2026-09-27: npm test now
       excludes tests/cheat (84 tests); npm run cheat runs them once.
-- [ ] Migrations since session 06 were pasted into Supabase's SQL
+- [x] Migrations since session 06 were pasted into Supabase's SQL
       Editor, so Supabase's migration history list doesn't show them.
-      The files in supabase/migrations are the record. Fine for now;
-      worth squaring up before anyone else touches the database.
+      Fixed 2026-10-10: history list and files now match, all 7.
 
 ---
 
@@ -143,6 +137,22 @@ Also in CLAUDE.md. Repeated here because they matter most.
 
 Newest at the top. One or two lines each: what got done, what broke, what to
 watch next time. Dates are Asher's local time (US Eastern).
+
+    2026-10-10 — Loose end: migration history squared up. Supabase's
+    list had wallet and fairness under the times they were applied
+    (20260927203851, 20260928005531), not the file numbers, and none
+    of the 5 pasted files. Checked read-only first: all 50 things the
+    5 files create exist live (functions, tables, append-only
+    triggers, browser locked out). Renamed the wallet and fairness
+    files to Supabase's numbers (order unchanged; their stored text
+    matched the files byte for byte). Auto mode blocked Claude from
+    writing the 5 missing history rows, so Asher pasted them in the
+    SQL Editor: number, name, the file's text, nothing re-run. Checked
+    after: all 7 listed, numbers match. The 5 pasted texts have
+    Windows line breaks (copy-paste did that); otherwise identical.
+    Harmless: Supabase matches by number. npm test 84, cheat 193 pass.
+    Next migration: apply it with Claude outside auto mode, or paste
+    it AND add its history row in the same go, so this can't drift.
 
     2026-10-10 — Saved the npm test change from last time. npm run
     cheat: 193 passed (~5 min). npm test: 84 passed, cheat folder
@@ -265,7 +275,7 @@ watch next time. Dates are Asher's local time (US Eastern).
     signed in (Claude can't type the password); check it live.
 
     2026-09-27 — Session 05 done. Provably fair, all in
-    supabase/migrations/20260927140000_fairness.sql (applied to Supabase):
+    supabase/migrations/20260928005531_fairness.sql (applied to Supabase):
     seed_pairs table, each pair waiting -> live -> revealed. Secret = 32
     random bytes as 64 hex chars; fingerprint = SHA-256 of that text;
     numbers = HMAC-SHA256(secret, "word:spin:round"), 4 bytes each / 2^32.
@@ -329,7 +339,7 @@ watch next time. Dates are Asher's local time (US Eastern).
     privacy defaults feed on / leaderboard on / profile off; coins stored
     as whole hundredths. CLAUDE.md faucet wording changed: coins now come
     from the faucet AND game payouts (Asher's call, payouts are play coins).
-    All coin rules live in supabase/migrations/20260927120000_wallet.sql:
+    All coin rules live in supabase/migrations/20260927203851_wallet.sql:
     row lock per player, idempotency key per movement, append-only
     triggers, a never-negative trigger that also locks, fixed faucet
     amounts as a CHECK, browser roles revoked. Tests run against a real
